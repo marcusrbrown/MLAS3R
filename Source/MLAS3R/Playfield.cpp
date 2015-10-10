@@ -38,7 +38,7 @@ void APlayfield::Tick( float DeltaTime )
 
 }
 
-
+#if WITH_EDITOR
 void APlayfield::EditorApplyScale(const FVector& DeltaScale, const FVector* PivotLocation, bool bAltDown, bool bShiftDown, bool bCtrlDown)
 {
    const FVector ModifiedScale = DeltaScale * ( AActor::bUsePercentageBasedScaling ? 500.0f : 5.0f );
@@ -59,4 +59,29 @@ void APlayfield::EditorApplyScale(const FVector& DeltaScale, const FVector* Pivo
       Extent.Z = FMath::Max(0.0f, Extent.Z);
       Bounds->SetBoxExtent(Extent);
    }
+}
+#endif
+
+AActor* APlayfield::SpawnRedEnemy()
+{
+   UWorld* world = GetWorld();
+   if (!world) return nullptr;
+   
+   return world->SpawnActor(RedEnemy);
+}
+
+AActor* APlayfield::SpawnBlueEnemy()
+{
+   UWorld* world = GetWorld();
+   if (!world) return nullptr;
+   
+   return world->SpawnActor(BlueEnemy);
+}
+
+AActor* APlayfield::SpawnGreenEnemy()
+{
+   UWorld* world = GetWorld();
+   if (!world) return nullptr;
+   
+   return world->SpawnActor(GreenEnemy);
 }

@@ -22,6 +22,15 @@ public:
    
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy Types")
    TSubclassOf<AActor> GreenEnemy;
+   
+   UFUNCTION(BlueprintCallable, Category = "Spawn")
+   AActor* SpawnRedEnemy();
+   
+   UFUNCTION(BlueprintCallable, Category = "Spawn")
+   AActor* SpawnBlueEnemy();
+   
+   UFUNCTION(BlueprintCallable, Category = "Spawn")
+   AActor* SpawnGreenEnemy();
 	
 public:
 	// Sets default values for this actor's properties
