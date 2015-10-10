@@ -1,7 +1,0 @@
-Name,Delay,EnemyType,Spline
-0,100,0,IntroLeft
-1,120,0,IntroLeft
-2,140,0,IntroLeft
-3,300,1,IntroRight
-4,320,1,IntroRight
-5,340,1,IntroRight

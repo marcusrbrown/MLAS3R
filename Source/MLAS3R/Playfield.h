@@ -3,7 +3,27 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "Runtime/Engine/Classes/Components/SplineComponent.h"
 #include "Playfield.generated.h"
+
+USTRUCT(BlueprintType)
+struct MLAS3R_API FPlayfieldEnemyState
+{
+   GENERATED_BODY()
+   
+   UPROPERTY()
+   AActor* Enemy;
+   
+   UPROPERTY()
+   USplineComponent* Spline;
+   
+   UPROPERTY()
+   int32 Duration;
+   
+   UPROPERTY(EditAnywhere)
+   float DeltaTime;
+};
+
 
 UCLASS(Blueprintable)
 class MLAS3R_API APlayfield : public AActor
@@ -31,6 +51,9 @@ public:
    
    UFUNCTION(BlueprintCallable, Category = "Spawn")
    AActor* SpawnGreenEnemy();
+   
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Levels")
+   TArray<UDataTable*> Levels;
 	
 public:
 	// Sets default values for this actor's properties
@@ -47,5 +70,14 @@ public:
    virtual void EditorApplyScale(const FVector& DeltaScale, const FVector* PivotLocation, bool bAltDown, bool bShiftDown, bool bCtrlDown) override;
 #endif
 	
-	
+private:
+   int32 CurrentLevel;
+   
+   int32 CurrentRow;
+   
+   float PlayTime;
+   
+   TArray<FPlayfieldEnemyState*> Enemies;
+   
+   USplineComponent* FindSplineByName(FString name);
 };

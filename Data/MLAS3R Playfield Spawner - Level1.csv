@@ -1,0 +1,7 @@
+Name,EnemyType,Spline,Easing,StartTime,Duration
+0,RedEnemy,IntroLeft,Linear,1000,10000
+1,RedEnemy,IntroLeft,Linear,2000,10000
+2,RedEnemy,IntroLeft,Linear,3000,10000
+3,BlueEnemy,IntroRight,Linear,2000,10000
+4,BlueEnemy,IntroRight,Linear,2100,10000
+5,BlueEnemy,IntroRight,Linear,2200,10000
