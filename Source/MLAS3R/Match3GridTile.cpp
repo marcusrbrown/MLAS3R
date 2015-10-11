@@ -26,7 +26,7 @@ void AMatch3GridTile::Tick( float DeltaTime )
 
 }
 
-void AMatch3GridTile::OnMatched_Implementation(EMatch3MatchType MatchType)
+void AMatch3GridTile::OnMatched_Implementation(EMatch3MoveType MoveType)
 {
 	
 }

@@ -15,7 +15,7 @@ enum class EMatch3TileState : uint8
 };
 
 UENUM(BlueprintType)
-enum class EMatch3MatchType : uint8
+enum class EMatch3MoveType : uint8
 {
 	None,
 	Invalid,
@@ -40,8 +40,8 @@ public:
 
 	/** Called when a match has been made. Reports the EMatch3MoveType that created the match. */
 	UFUNCTION(BlueprintNativeEvent, Category = "Match 3 Game Events")
-	void OnMatched(EMatch3MatchType MatchType);
-	virtual void OnMatched_Implementation(EMatch3MatchType MatchType);
+	void OnMatched(EMatch3MoveType MoveType);
+	virtual void OnMatched_Implementation(EMatch3MoveType MoveType);
 	
 	UFUNCTION(BlueprintNativeEvent, Category = "Match 3 Game Events")
 	void OnSwapMove(AMatch3GridTile* DestinationTile, bool bMoveWillSucceed);
