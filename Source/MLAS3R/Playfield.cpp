@@ -8,12 +8,14 @@
 namespace
 {
 	static const FColor DefaultBoundsColor(100, 255, 100, 255);
+	static const FVector DefaultSpawnLocation(0.0f, 2000.0f, 0.0f);
+	static const FRotator DefaultSpawnRotation;
 }
 
 // Sets default values
 APlayfield::APlayfield() : CurrentLevel(0), CurrentRow(0), PlayTime(0)
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can tu  rn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
 	// Setup our RootComponent
@@ -159,7 +161,9 @@ AActor* APlayfield::SpawnRedEnemy()
 	UWorld* world = GetWorld();
 	if (!world) return nullptr;
 	
-	return world->SpawnActor(RedEnemy);
+	FActorSpawnParameters spawnParams;
+	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	return world->SpawnActor(RedEnemy, &DefaultSpawnLocation, &DefaultSpawnRotation, spawnParams);
 }
 
 AActor* APlayfield::SpawnBlueEnemy()
@@ -167,7 +171,9 @@ AActor* APlayfield::SpawnBlueEnemy()
 	UWorld* world = GetWorld();
 	if (!world) return nullptr;
 	
-	return world->SpawnActor(BlueEnemy);
+	FActorSpawnParameters spawnParams;
+	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	return world->SpawnActor(BlueEnemy, &DefaultSpawnLocation, &DefaultSpawnRotation, spawnParams);
 }
 
 AActor* APlayfield::SpawnGreenEnemy()
@@ -175,7 +181,9 @@ AActor* APlayfield::SpawnGreenEnemy()
 	UWorld* world = GetWorld();
 	if (!world) return nullptr;
 	
-	return world->SpawnActor(GreenEnemy);
+	FActorSpawnParameters spawnParams;
+	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	return world->SpawnActor(GreenEnemy, &DefaultSpawnLocation, &DefaultSpawnRotation, spawnParams);
 }
 
 USplineComponent* APlayfield::FindSplineByName(FString name)
