@@ -31,8 +31,6 @@ void APlayfield::BeginPlay()
 {
 	Super::BeginPlay();
    
-   auto row = ((UDataTable*)Levels[0])->FindRow<FPlayfieldSpawnTableRow>(*FString::FromInt(0), TEXT(""));
-	
 }
 
 // Called every frame
