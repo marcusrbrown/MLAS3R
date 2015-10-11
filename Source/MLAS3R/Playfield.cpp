@@ -89,6 +89,13 @@ void APlayfield::Tick( float DeltaTime )
 	{
 		auto enemyState = *Iter;
 		
+		// Check to ensure our enemy was not removed
+		if(!enemyState->Enemy->IsValidLowLevel())
+		{
+			doneEnemies.Push(Iter.GetIndex());
+			continue;
+		}
+		
 		// Calculate spline t value
 		float length = enemyState->Spline->GetSplineLength();
 		float duration = enemyState->Duration / 1000.0f;

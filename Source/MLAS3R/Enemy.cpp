@@ -3,6 +3,13 @@
 #include "MLAS3R.h"
 #include "Enemy.h"
 
-
+AEnemy::AEnemy()
+{
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = false;
+	
+	// This collides
+	SetActorEnableCollision(true);
+}
 
 

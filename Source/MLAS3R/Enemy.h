@@ -12,8 +12,7 @@ UCLASS(Blueprintable)
 class MLAS3R_API AEnemy : public ASkeletalMeshActor
 {
 	GENERATED_BODY()
-	
-	
-	
-	
+		
+public:
+	AEnemy();
 };
