@@ -7,11 +7,11 @@
 // Sets default values
 ASplineActor::ASplineActor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-   
-   Spline = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
-   RootComponent = Spline;
+	
+	Spline = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
+	RootComponent = Spline;
 }
 
 // Called when the game starts or when spawned
@@ -25,6 +25,6 @@ void ASplineActor::BeginPlay()
 void ASplineActor::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
-
+	
 }
 

@@ -6,7 +6,7 @@
 #include "Enemy.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS(Blueprintable)
 class MLAS3R_API AEnemy : public ASkeletalMeshActor
