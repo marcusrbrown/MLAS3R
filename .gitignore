@@ -67,3 +67,4 @@ DerivedDataCache/*
 *.swo
 .ctrlp_cache/
 
+SourceArt/*.blend1
