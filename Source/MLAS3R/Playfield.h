@@ -4,24 +4,61 @@
 
 #include "GameFramework/Actor.h"
 #include "Runtime/Engine/Classes/Components/SplineComponent.h"
+#include "TableRows.h"
 #include "Playfield.generated.h"
 
+UENUM()
+enum class EPlayfieldEnemyState : uint8
+{
+	Intro,
+	ToFormation,
+	Formation,
+	ToAttack,
+	Attack,
+	Dead
+};
+
 USTRUCT(BlueprintType)
-struct MLAS3R_API FPlayfieldEnemyState
+struct MLAS3R_API FPlayfieldEnemyData
 {
 	GENERATED_BODY()
+	
+	UPROPERTY()
+	FString Type;
+	
+	UPROPERTY()
+	EPlayfieldEnemyState State;
+	
+	UPROPERTY(EditAnywhere)
+	float DeltaTime;
 	
 	UPROPERTY()
 	AActor* Enemy;
 	
 	UPROPERTY()
-	USplineComponent* Spline;
+	float Speed;
 	
 	UPROPERTY()
-	int32 Duration;
+	int32 GridAddress;
 	
-	UPROPERTY(EditAnywhere)
-	float DeltaTime;
+	UPROPERTY()
+	USplineComponent* IntroSpline;
+	
+	UPROPERTY()
+	TArray<float> IntroBullets;
+	
+	UPROPERTY()
+	int32 IntroBulletIndex;
+	
+	UPROPERTY()
+	USplineComponent* AttackSpline;
+	
+	UPROPERTY()
+	TArray<float> AttackBullets;
+	
+	UPROPERTY()
+	int32 AttackBulletIndex;
+	
 };
 
 
@@ -43,6 +80,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy Types")
 	TSubclassOf<AActor> GreenEnemy;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet Types")
+	TSubclassOf<AActor> RedBullet;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet Types")
+	TSubclassOf<AActor> BlueBullet;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet Types")
+	TSubclassOf<AActor> GreenBullet;
+	
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	AActor* SpawnRedEnemy();
 	
@@ -51,6 +97,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	AActor* SpawnGreenEnemy();
+	
+	UFUNCTION(BlueprintCallable, Category = "Spawn")
+	AActor* SpawnEnemyFromTableRow(const FPlayfieldSpawnTableRow& row);
+	
+	UFUNCTION(BlueprintCallable, Category = "Spawn")
+	AActor* SpawnEnemyBulletAtLocation(const FString& type, const FVector& location);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Levels")
 	TArray<UDataTable*> Levels;
@@ -77,7 +129,11 @@ private:
 	
 	float PlayTime;
 	
-	TArray<FPlayfieldEnemyState*> Enemies;
+	float SpeedMultiplier;
+	
+	TArray<FPlayfieldEnemyData> Enemies;
 	
 	USplineComponent* FindSplineByName(FString name);
+	
+	void ParseBulletString(const FString& bulletString, TArray<float>& OutArray);
 };
