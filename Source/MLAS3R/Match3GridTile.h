@@ -5,6 +5,8 @@
 #include "GameFramework/Actor.h"
 #include "Match3GridTile.generated.h"
 
+class AMatch3Grid;
+
 UENUM()
 enum class EMatch3TileState : uint8
 {
@@ -50,6 +52,12 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
+	UFUNCTION()
+	void TileSelected();
+
+	UFUNCTION()
+	void TileSelectedByTouch(ETouchIndex::Type FingerIndex);
+	
 	/** Called when a match has been made. Reports the EMatch3MoveType that created the match. */
 	UFUNCTION(BlueprintNativeEvent, Category = "Match 3 Game Events")
 	void OnMatched(EMatch3MoveType MoveType);
@@ -82,7 +90,16 @@ public:
 	FTileAbilities Abilities;
 	
 protected:
-	
+	float FallingStartTime;
+	float TotalFallingTime;
+	FVector FallingStartLocation;
+	FVector FallingEndLocation;
+	FTimerHandle TickFallingHandle;
+
+	/** The grid that owns this tile. */
+	UPROPERTY(BlueprintReadOnly, Category = "Match 3 Tile")
+	AMatch3Grid* Grid;
+
 	/** Location on the grid as a 1D key/value. To find the neighbors of this tile, ask the grid. */
 	UPROPERTY(BlueprintReadOnly, Category = "Match 3 Tile")
 	int32 GridAddress;
