@@ -6,10 +6,25 @@
 #include "Runtime/Engine/Classes/Components/SplineComponent.h"
 #include "Playfield.generated.h"
 
+
+UENUM()
+enum class EPlayfieldEnemyState : uint8
+{
+	Intro,
+	ToFormation,
+	Formation,
+	ToAttack,
+	Attack,
+	Dead
+};
+
 USTRUCT(BlueprintType)
-struct MLAS3R_API FPlayfieldEnemyState
+struct MLAS3R_API FPlayfieldEnemyData
 {
 	GENERATED_BODY()
+	
+	UPROPERTY()
+	EPlayfieldEnemyState State;
 	
 	UPROPERTY()
 	AActor* Enemy;
@@ -22,6 +37,9 @@ struct MLAS3R_API FPlayfieldEnemyState
 	
 	UPROPERTY(EditAnywhere)
 	float DeltaTime;
+	
+	UPROPERTY()
+	TArray<float> BulletTimes;
 };
 
 
@@ -77,7 +95,7 @@ private:
 	
 	float PlayTime;
 	
-	TArray<FPlayfieldEnemyState*> Enemies;
+	TArray<FPlayfieldEnemyData> Enemies;
 	
 	USplineComponent* FindSplineByName(FString name);
 };

@@ -53,23 +53,24 @@ void APlayfield::Tick( float DeltaTime )
 				
 				auto spline = FindSplineByName(row->Spline);
 				if (spline) {
-					FPlayfieldEnemyState* enemy = new FPlayfieldEnemyState();
-					enemy->Spline = spline;
-					enemy->Duration = row->Duration;
-					enemy->DeltaTime = 0.0f;
+					FPlayfieldEnemyData enemy;
+					eneny.State = EPlayfieldEnemyState::Intro;
+					enemy.Spline = spline;
+					enemy.Duration = row->Duration;
+					enemy.DeltaTime = 0.0f;
 					
 					// TODO: Replace with blueprint native function
 					if (row->EnemyType == FString("RedEnemy"))
 					{
-						enemy->Enemy = SpawnRedEnemy();
+						enemy.Enemy = SpawnRedEnemy();
 					}
 					else if (row->EnemyType == FString("BlueEnemy"))
 					{
-						enemy->Enemy = SpawnBlueEnemy();
+						enemy.Enemy = SpawnBlueEnemy();
 					}
 					else if (row->EnemyType == FString("GreenEnemy"))
 					{
-						enemy->Enemy = SpawnGreenEnemy();
+						enemy.Enemy = SpawnGreenEnemy();
 					}
 					
 					Enemies.Push(enemy);
@@ -89,19 +90,19 @@ void APlayfield::Tick( float DeltaTime )
 	TArray<int32> doneEnemies;
 	for (auto Iter(Enemies.CreateIterator()); Iter; Iter++)
 	{
-		auto enemyState = *Iter;
+		auto& enemyState = *Iter;
 		
 		// Check to ensure our enemy was not removed
-		if(!enemyState->Enemy->IsValidLowLevel())
+		if(!enemyState.Enemy->IsValidLowLevel())
 		{
 			doneEnemies.Push(Iter.GetIndex());
 			continue;
 		}
 		
 		// Calculate spline t value
-		float length = enemyState->Spline->GetSplineLength();
-		float duration = enemyState->Duration / 1000.0f;
-		float delta = enemyState->DeltaTime;
+		float length = enemyState.Spline->GetSplineLength();
+		float duration = enemyState.Duration / 1000.0f;
+		float delta = enemyState.DeltaTime;
 		float splinePosition = delta / duration * length;
 		
 		// Remove enemies that have traversed the spline
@@ -112,11 +113,11 @@ void APlayfield::Tick( float DeltaTime )
 		}
 		
 		// Update the enemy on the spline
-		auto location = enemyState->Spline->GetLocationAtDistanceAlongSpline(splinePosition, ESplineCoordinateSpace::World);
-		enemyState->Enemy->SetActorLocation(location);
+		auto location = enemyState.Spline->GetLocationAtDistanceAlongSpline(splinePosition, ESplineCoordinateSpace::World);
+		enemyState.Enemy->SetActorLocation(location);
 		
 		// Update the enemies delta time
-		enemyState->DeltaTime += DeltaTime;
+		enemyState.DeltaTime += DeltaTime;
 	}
 	
 	// Remove the enemies from our update list
@@ -126,9 +127,7 @@ void APlayfield::Tick( float DeltaTime )
 		// TODO: Signal Blueprints for a transition
 		
 		int32 index = doneEnemies[doneIndex];
-		auto enemyState = Enemies[index];
 		Enemies.RemoveAt(index);
-		delete enemyState;
 	}
 }
 
