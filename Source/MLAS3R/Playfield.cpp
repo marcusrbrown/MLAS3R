@@ -9,7 +9,7 @@ namespace
 {
 	static const FColor DefaultBoundsColor(100, 255, 100, 255);
 	static const FVector DefaultSpawnLocation(0.0f, 2000.0f, 0.0f);
-	static const FRotator DefaultSpawnRotation;
+	static const FRotator DefaultSpawnRotation(0.0f, 90.0f, 0.0f);
 }
 
 // Sets default values
