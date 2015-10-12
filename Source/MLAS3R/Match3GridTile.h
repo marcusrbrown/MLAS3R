@@ -22,6 +22,19 @@ enum class EMatch3MoveType : uint8
 	Swap,
 };
 
+USTRUCT()
+struct FTileAbilities
+{
+	GENERATED_USTRUCT_BODY()
+
+	bool CanSwap() const { return !bPreventSwapping; }
+
+protected:
+	/** Tile can't be selected as part of a normal swapping move. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	uint32 bPreventSwapping : 1;
+};
+
 UCLASS(Blueprintable)
 class MLAS3R_API AMatch3GridTile : public AActor
 {
@@ -37,7 +50,6 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-
 	/** Called when a match has been made. Reports the EMatch3MoveType that created the match. */
 	UFUNCTION(BlueprintNativeEvent, Category = "Match 3 Game Events")
 	void OnMatched(EMatch3MoveType MoveType);
@@ -46,6 +58,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = "Match 3 Game Events")
 	void OnSwapMove(AMatch3GridTile* DestinationTile, bool bMoveWillSucceed);
 	virtual void OnSwapMove_Implementation(AMatch3GridTile* DestinationTile, bool bMoveWillSucceed);
+
+	/** Play an effect when the tile is selected. */
+	UFUNCTION(BlueprintImplementableEvent, Category = "Match 3 Game Events")
+	void PlaySelectionEffect(bool bTurnEffectOn);
 
 	void StartFalling(bool bUseCurrentWorldLocation = false);
 	void FinishFalling();
@@ -61,6 +77,9 @@ public:
 	
 	UPROPERTY()
 	EMatch3TileState TileState;
+
+	UPROPERTY()
+	FTileAbilities Abilities;
 	
 protected:
 	
