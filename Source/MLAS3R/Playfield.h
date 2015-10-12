@@ -4,8 +4,8 @@
 
 #include "GameFramework/Actor.h"
 #include "Runtime/Engine/Classes/Components/SplineComponent.h"
+#include "TableRows.h"
 #include "Playfield.generated.h"
-
 
 UENUM()
 enum class EPlayfieldEnemyState : uint8
@@ -26,20 +26,29 @@ struct MLAS3R_API FPlayfieldEnemyData
 	UPROPERTY()
 	EPlayfieldEnemyState State;
 	
-	UPROPERTY()
-	AActor* Enemy;
-	
-	UPROPERTY()
-	USplineComponent* Spline;
-	
-	UPROPERTY()
-	int32 Duration;
-	
 	UPROPERTY(EditAnywhere)
 	float DeltaTime;
 	
 	UPROPERTY()
-	TArray<float> BulletTimes;
+	AActor* Enemy;
+	
+	UPROPERTY()
+	float Speed;
+	
+	UPROPERTY()
+	int32 GridAddress;
+	
+	UPROPERTY()
+	USplineComponent* IntroSpline;
+	
+	UPROPERTY()
+	TArray<float> IntroBullets;
+	
+	UPROPERTY()
+	USplineComponent* AttackSpline;
+	
+	UPROPERTY()
+	TArray<float> AttackBullets;
 };
 
 
@@ -70,6 +79,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	AActor* SpawnGreenEnemy();
 	
+	UFUNCTION(BlueprintCallable, Category = "Spawn")
+	AActor* SpawnEnemyFromTableRow(const FPlayfieldSpawnTableRow& row);
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Levels")
 	TArray<UDataTable*> Levels;
 	
@@ -95,7 +107,11 @@ private:
 	
 	float PlayTime;
 	
+	float SpeedMultiplier;
+	
 	TArray<FPlayfieldEnemyData> Enemies;
 	
 	USplineComponent* FindSplineByName(FString name);
+	
+	void ParseBulletString(const FString& bulletString, TArray<float>& OutArray);
 };

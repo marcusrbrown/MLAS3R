@@ -12,14 +12,23 @@ struct MLAS3R_API FPlayfieldSpawnTableRow : public FTableRowBase
 	FString EnemyType;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
-	FString Spline;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
-	FString Easing;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
 	int32 StartTime;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
-	int32 Duration;
+	float Speed;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
+	int32 GridAddress;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
+	FString IntroSpline;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
+	FString IntroBullets;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
+	FString AttackSpline;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
+	FString AttackBullets;
 };
