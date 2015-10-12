@@ -6,6 +6,24 @@
 #include "Match3GridTile.h"
 #include "Match3Grid.generated.h"
 
+/** TODO: This guy will not survive. He's a load-bearing struct from the Match 3 training series. */
+USTRUCT()
+struct FTileType
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Probability;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FTileAbilities Abilities;
+
+	FTileType()
+	: Probability(1.0f)
+	{
+	}
+};
+
 UCLASS()
 class MLAS3R_API AMatch3Grid : public AActor
 {
@@ -44,7 +62,7 @@ public:
 
 	void RespawnTiles();
 	void SwapTiles(AMatch3GridTile* TileA, AMatch3GridTile* TileB, bool bRepositionTileActors = false);
-	bool IsMoveLegal(AMatch3GridTile* TileA, AMatch3GridTile* TileB) const;
+	bool IsMoveLegal(AMatch3GridTile* TileA, AMatch3GridTile* TileB);
 
 	/** Check for a successful sequence. */
 	TArray<AMatch3GridTile*> FindNeighbors(AMatch3GridTile* StartingTile, bool bMustMatchID = true, int32 MatchLength = 3) const;
@@ -56,7 +74,7 @@ public:
 	void ExecuteMatch(TArray<AMatch3GridTile*> MatchingTiles);
 
 	/** Reacts to a tile being clicked. */
-	void OnTileWasSelected(AMatch3GridTile* Tile);
+	void OnTileWasSelected(AMatch3GridTile* NewSelectedTile);
 
 	/** Detects unwinnable states. */
 	bool IsUnwinnable() const;
@@ -73,6 +91,12 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<AMatch3GridTile*> Tiles;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FTileType> TileLibrary;
+
+	UPROPERTY(EditAnywhere, Category = "Match 3 Tile")
+	TSubclassOf<class AMatch3GridTile> TileToSpawn;
 
 	/** The width of the grid. Used to calculate tile positions. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Match 3 Tile")
