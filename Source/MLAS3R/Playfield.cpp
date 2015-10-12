@@ -54,7 +54,7 @@ void APlayfield::Tick( float DeltaTime )
 				auto spline = FindSplineByName(row->Spline);
 				if (spline) {
 					FPlayfieldEnemyData enemy;
-					eneny.State = EPlayfieldEnemyState::Intro;
+					enemy.State = EPlayfieldEnemyState::Intro;
 					enemy.Spline = spline;
 					enemy.Duration = row->Duration;
 					enemy.DeltaTime = 0.0f;

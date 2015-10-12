@@ -34,6 +34,11 @@ void AMatch3Grid::Tick( float DeltaTime )
 
 }
 
+AMatch3GridTile* AMatch3Grid::GetTileFromGridAddress(int32 GridAddress) const
+{
+	return nullptr;
+}
+
 FVector AMatch3Grid::GetLocationFromGridAddress(int32 GridAddress)
 {
 	return FVector();
