@@ -13,6 +13,8 @@ class MLAS3R_API ACoreGameMode : public AGameMode
 {
 	GENERATED_BODY()
 	
+public:
+	void BeginPlay() override;
 	
 	
 	
