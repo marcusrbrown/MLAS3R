@@ -44,7 +44,7 @@ FVector AMatch3Grid::GetLocationFromGridAddress(int32 GridAddress, int32 XOffset
 	return FVector();
 }
 
-bool AMatch3Grid::GetGridAddressWithOffset(int32 GridAddress, int32 XOffset, int32 YOffset, int32& RelativeGridAddress)
+bool AMatch3Grid::GetGridAddressWithOffset(int32 GridAddress, int32 XOffset, int32 YOffset, int32& RelativeGridAddress) const
 {
 	return false;
 }
@@ -102,7 +102,53 @@ bool AMatch3Grid::IsMoveLegal(AMatch3GridTile* TileA, AMatch3GridTile* TileB)
 
 TArray<AMatch3GridTile*> AMatch3Grid::FindNeighbors(AMatch3GridTile* StartingTile, bool bMustMatchID, int32 MatchLength) const
 {
-	return TArray<AMatch3GridTile*>();
+	if (MatchLength < 0)
+	{
+		MatchLength = MinimumMatchLength;
+	}
+
+	TArray<AMatch3GridTile*> allMatchingTiles;
+
+	for (int32 horizontal = 0; horizontal < 2; ++horizontal)
+	{
+		TArray<AMatch3GridTile*> matchInProgress;
+
+		for (int32 direction = -1; direction <= 1; direction += 2)
+		{
+			int32 maxGridOffset = !bMustMatchID ? MatchLength : (horizontal ? GridWidth : GridHeight);
+
+			for (int32 gridOffset = 1; gridOffset < maxGridOffset; ++gridOffset)
+			{
+				int32 neighborGridAddress;
+				AMatch3GridTile* neighborTile;
+
+				if (GetGridAddressWithOffset(StartingTile->GetGridAddress(), direction * (horizontal ? gridOffset : 0), direction * (horizontal ? 0 : gridOffset), neighborGridAddress))
+				{
+					neighborTile = GetTileFromGridAddress(neighborGridAddress);
+
+					if (neighborTile && (!bMustMatchID || (neighborTile->TileTypeID == StartingTile->TileTypeID)))
+					{
+						matchInProgress.Add(neighborTile);
+						continue;
+					}
+
+					break;
+				}
+			}
+		}
+
+		if (!bMustMatchID || ((matchInProgress.Num() + 1) >= FMath::Min(MatchLength, horizontal ? GridWidth : GridHeight)))
+		{
+			allMatchingTiles.Append(matchInProgress);
+		}
+	}
+
+	if (!bMustMatchID || (allMatchingTiles.Num() > 0))
+	{
+		allMatchingTiles.Add(StartingTile);
+	}
+
+	return allMatchingTiles;
 }
 
 TArray<AMatch3GridTile*> AMatch3Grid::FindTilesOfType(int32 TileTypeID) const

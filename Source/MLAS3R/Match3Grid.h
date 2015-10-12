@@ -52,7 +52,7 @@ public:
 
 	/** Get a grid address relative to another grid address. */
 	UFUNCTION(BlueprintCallable, Category = "Match 3 Tile")
-	bool GetGridAddressWithOffset(int32 GridAddress, int32 XOffset, int32 YOffset, int32& RelativeGridAddress);
+	bool GetGridAddressWithOffset(int32 GridAddress, int32 XOffset, int32 YOffset, int32& RelativeGridAddress) const;
 
 	bool AreAddressesNeighbors(int32 GridAddressA, int32 GridAddressB) const;
 
@@ -65,7 +65,7 @@ public:
 	bool IsMoveLegal(AMatch3GridTile* TileA, AMatch3GridTile* TileB);
 
 	/** Check for a successful sequence. */
-	TArray<AMatch3GridTile*> FindNeighbors(AMatch3GridTile* StartingTile, bool bMustMatchID = true, int32 MatchLength = 3) const;
+	TArray<AMatch3GridTile*> FindNeighbors(AMatch3GridTile* StartingTile, bool bMustMatchID = true, int32 MatchLength = -1) const;
 
 	/** Find all tiles of a given type. */
 	TArray<AMatch3GridTile*> FindTilesOfType(int32 TileTypeID) const;
