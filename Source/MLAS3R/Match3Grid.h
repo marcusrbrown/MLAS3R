@@ -58,7 +58,7 @@ public:
 
 	void OnTileFallingFinished(AMatch3GridTile* Tile, int32 LandingGridAddress);
 	void OnTileMatchingFinished(AMatch3GridTile* Tile);
-	void OnTileSwappingFinished(AMatch3GridTile* Tile);
+	void OnSwapDisplayFinished(AMatch3GridTile* Tile);
 
 	void RespawnTiles();
 	void SwapTiles(AMatch3GridTile* TileA, AMatch3GridTile* TileB, bool bRepositionTileActors = false);

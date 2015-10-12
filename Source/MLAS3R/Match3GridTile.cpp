@@ -50,12 +50,12 @@ void AMatch3GridTile::TileSelectedByTouch(ETouchIndex::Type FingerIndex)
 
 void AMatch3GridTile::OnMatched_Implementation(EMatch3MoveType MoveType)
 {
-	
+	Grid->OnTileMatchingFinished(this);
 }
 
 void AMatch3GridTile::OnSwapMove_Implementation(AMatch3GridTile* DestinationTile, bool bMoveWillSucceed)
 {
-	
+	Grid->OnSwapDisplayFinished(this);
 }
 
 void AMatch3GridTile::StartFalling(bool bUseCurrentWorldLocation)

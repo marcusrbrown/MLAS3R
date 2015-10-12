@@ -64,9 +64,29 @@ void AMatch3Grid::OnTileMatchingFinished(AMatch3GridTile* Tile)
 
 }
 
-void AMatch3Grid::OnTileSwappingFinished(AMatch3GridTile* Tile)
+void AMatch3Grid::OnSwapDisplayFinished(AMatch3GridTile* Tile)
 {
+	SwappingTiles.Add(Tile);
 
+	if (SwappingTiles.Num() == 2)
+	{
+		checkSlow(SwappingTiles[0] && SwappingTiles[1]);
+
+		bPendingSwapMove = false;
+
+		if (bPendingSwapMoveSuccess)
+		{
+			SwapTiles(SwappingTiles[0], SwappingTiles[1], true);
+			SetLastMove(EMatch3MoveType::Swap);
+			ExecuteMatch(LastLegalMatch);
+		}
+		else
+		{
+			OnMoveMade(EMatch3MoveType::Invalid);
+		}
+
+		SwappingTiles.Empty();
+	}
 }
 
 void AMatch3Grid::RespawnTiles()
@@ -76,7 +96,19 @@ void AMatch3Grid::RespawnTiles()
 
 void AMatch3Grid::SwapTiles(AMatch3GridTile* TileA, AMatch3GridTile* TileB, bool bRepositionTileActors)
 {
+	int32 gridAddress = TileA->GetGridAddress();
 
+	TileA->SetGridAddress(TileB->GetGridAddress());
+	TileB->SetGridAddress(gridAddress);
+
+	Tiles[TileA->GetGridAddress()] = TileA;
+	Tiles[TileB->GetGridAddress()] = TileB;
+
+	if (bRepositionTileActors)
+	{
+		TileA->SetActorLocation(GetLocationFromGridAddress(TileA->GetGridAddress()));
+		TileB->SetActorLocation(GetLocationFromGridAddress(TileB->GetGridAddress()));
+	}
 }
 
 bool AMatch3Grid::IsMoveLegal(AMatch3GridTile* TileA, AMatch3GridTile* TileB)
