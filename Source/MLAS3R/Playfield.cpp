@@ -191,6 +191,7 @@ USplineComponent* APlayfield::FindSplineByName(FString name)
 	for (TActorIterator<ASplineActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
 		if (ActorItr->GetName() == name) return ActorItr->Spline;
+		if (ActorItr->ActorHasTag(FName(*name))) return ActorItr->Spline;
 	}
 	return nullptr;
 }

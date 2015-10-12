@@ -8,6 +8,13 @@ AEnemy::AEnemy()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	
+	auto staticMeshComponent = GetStaticMeshComponent();
+	staticMeshComponent->SetMobility(EComponentMobility::Movable);
+	
+	//staticMeshComponent->SetNotifyRigidBodyCollision(true);
+	staticMeshComponent->bGenerateOverlapEvents = 1;
+	
+	
 	// This collides
 	SetActorEnableCollision(true);
 }

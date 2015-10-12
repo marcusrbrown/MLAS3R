@@ -31,6 +31,8 @@ class MLAS3R_API ACoreGameMode : public AGameMode
 	GENERATED_BODY()
 	
 public:
+	void BeginPlay() override;
+
 	/** The speed at which tiles fall into place. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Match 3 Game")
 	float TileFallSpeed;

@@ -2,14 +2,14 @@
 
 #pragma once
 
-#include "Animation/SkeletalMeshActor.h"
+#include "Engine/StaticMeshActor.h"
 #include "Enemy.generated.h"
 
 /**
  *
  */
 UCLASS(Blueprintable)
-class MLAS3R_API AEnemy : public ASkeletalMeshActor
+class MLAS3R_API AEnemy : public AStaticMeshActor
 {
 	GENERATED_BODY()
 		
