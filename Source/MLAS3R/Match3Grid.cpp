@@ -22,7 +22,9 @@ AMatch3Grid::AMatch3Grid()
 void AMatch3Grid::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	Tiles.Empty(GridWidth * GridHeight);
+	Tiles.AddUninitialized(Tiles.Max());
 }
 
 // Called every frame
