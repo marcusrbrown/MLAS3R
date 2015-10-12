@@ -85,11 +85,29 @@ void APlayfield::Tick( float DeltaTime )
 		// Calculate spline t value
 		float length = enemyState.IntroSpline->GetSplineLength();
 		float splinePosition = enemyState.Speed * enemyState.DeltaTime;
-		float clampedPosiiton = FMath::Clamp<float>(splinePosition, 0.0f, length);
+		float clampedPosition = FMath::Clamp<float>(splinePosition, 0.0f, length);
+		float bulletTime = clampedPosition / length;
 		
 		// Update the enemy on the spline
-		auto location = enemyState.IntroSpline->GetLocationAtDistanceAlongSpline(clampedPosiiton, ESplineCoordinateSpace::World);
+		auto location = enemyState.IntroSpline->GetLocationAtDistanceAlongSpline(clampedPosition, ESplineCoordinateSpace::World);
 		enemyState.Enemy->SetActorLocation(location);
+		
+		// Check to see if we need to fire
+		while (enemyState.IntroBulletIndex < enemyState.IntroBullets.Num())
+		{
+			float t = enemyState.IntroBullets[enemyState.IntroBulletIndex];
+			if (bulletTime >= t)
+			{
+				UE_LOG(LogTemp, Log, TEXT("SPAWNING BULLET %d @ %f"), enemyState.IntroBulletIndex, t);
+				auto bulletLocation = enemyState.IntroSpline->GetLocationAtDistanceAlongSpline(t * length, ESplineCoordinateSpace::World);
+				enemyState.IntroBulletIndex++;
+				SpawnEnemyBulletAtLocation(enemyState.Type, bulletLocation);
+			}
+			else
+			{
+				break;
+			}
+		}
 		
 		// Update the enemies delta time
 		enemyState.DeltaTime += DeltaTime;
@@ -172,6 +190,7 @@ AActor* APlayfield::SpawnEnemyFromTableRow(const FPlayfieldSpawnTableRow& row)
 	
 	// Store off our row into the enemy state
 	FPlayfieldEnemyData enemy;
+	enemy.Type = row.EnemyType;
 	enemy.State = EPlayfieldEnemyState::Intro;
 	enemy.DeltaTime = 0.0f;
 	enemy.Speed = row.Speed * SpeedMultiplier;
@@ -179,20 +198,22 @@ AActor* APlayfield::SpawnEnemyFromTableRow(const FPlayfieldSpawnTableRow& row)
 	
 	enemy.IntroSpline = introSpline;
 	ParseBulletString(row.IntroBullets, enemy.IntroBullets);
+	enemy.IntroBulletIndex = 0;
 	
 	enemy.AttackSpline = FindSplineByName(row.AttackSpline);
 	ParseBulletString(row.AttackBullets, enemy.AttackBullets);
+	enemy.AttackBulletIndex = 0;
 	
 	// TODO: Replace with blueprint native function
-	if (row.EnemyType == FString("RedEnemy"))
+	if (enemy.Type == FString("RedEnemy"))
 	{
 		enemy.Enemy = SpawnRedEnemy();
 	}
-	else if (row.EnemyType == FString("BlueEnemy"))
+	else if (enemy.Type== FString("BlueEnemy"))
 	{
 		enemy.Enemy = SpawnBlueEnemy();
 	}
-	else if (row.EnemyType == FString("GreenEnemy"))
+	else if (enemy.Type == FString("GreenEnemy"))
 	{
 		enemy.Enemy = SpawnGreenEnemy();
 	}
@@ -202,6 +223,30 @@ AActor* APlayfield::SpawnEnemyFromTableRow(const FPlayfieldSpawnTableRow& row)
 	
 	
 	return enemy.Enemy;
+}
+
+AActor* APlayfield::SpawnEnemyBulletAtLocation(const FString& type, const FVector& location)
+{
+	UWorld* world = GetWorld();
+	if (!world) return nullptr;
+	
+	FActorSpawnParameters spawnParams;
+	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	
+	if (type == FString("RedEnemy"))
+	{
+		return world->SpawnActor(RedBullet, &location, &DefaultSpawnRotation, spawnParams);
+	}
+	else if (type == FString("BlueEnemy"))
+	{
+		return world->SpawnActor(BlueBullet, &location, &DefaultSpawnRotation, spawnParams);
+	}
+	else if (type == FString("GreenEnemy"))
+	{
+		return world->SpawnActor(GreenBullet, &location, &DefaultSpawnRotation, spawnParams);
+	}
+	
+	return nullptr;
 }
 
 USplineComponent* APlayfield::FindSplineByName(FString name)

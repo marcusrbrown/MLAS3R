@@ -24,6 +24,9 @@ struct MLAS3R_API FPlayfieldEnemyData
 	GENERATED_BODY()
 	
 	UPROPERTY()
+	FString Type;
+	
+	UPROPERTY()
 	EPlayfieldEnemyState State;
 	
 	UPROPERTY(EditAnywhere)
@@ -45,10 +48,17 @@ struct MLAS3R_API FPlayfieldEnemyData
 	TArray<float> IntroBullets;
 	
 	UPROPERTY()
+	int32 IntroBulletIndex;
+	
+	UPROPERTY()
 	USplineComponent* AttackSpline;
 	
 	UPROPERTY()
 	TArray<float> AttackBullets;
+	
+	UPROPERTY()
+	int32 AttackBulletIndex;
+	
 };
 
 
@@ -70,6 +80,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy Types")
 	TSubclassOf<AActor> GreenEnemy;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet Types")
+	TSubclassOf<AActor> RedBullet;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet Types")
+	TSubclassOf<AActor> BlueBullet;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet Types")
+	TSubclassOf<AActor> GreenBullet;
+	
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	AActor* SpawnRedEnemy();
 	
@@ -81,6 +100,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	AActor* SpawnEnemyFromTableRow(const FPlayfieldSpawnTableRow& row);
+	
+	UFUNCTION(BlueprintCallable, Category = "Spawn")
+	AActor* SpawnEnemyBulletAtLocation(const FString& type, const FVector& location);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Levels")
 	TArray<UDataTable*> Levels;
