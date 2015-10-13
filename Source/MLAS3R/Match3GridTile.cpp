@@ -60,7 +60,66 @@ void AMatch3GridTile::OnSwapMove_Implementation(AMatch3GridTile* DestinationTile
 
 void AMatch3GridTile::StartFalling(bool bUseCurrentWorldLocation)
 {
-	
+	float fallDistance = 0.0f;
+
+	FallingStartTime = GetWorld()->GetTimeSeconds();
+	FallingStartLocation = GetActorLocation();
+
+	// Tiles fall at a fixed rate of 120 FPS.
+	GetWorldTimerManager().SetTimer(TickFallingHandle, this, &AMatch3GridTile::TickFalling, 0.001f, true);
+
+	check(Grid);
+
+	if (!bUseCurrentWorldLocation)
+	{
+		// Fall from where we are on the grid to where we're supposed to be on the grid.
+		int32 yOffset = 0;
+		int32 heightAboveBottom = 1;
+
+		for (;;)
+		{
+			++yOffset;
+
+			if (Grid->GetGridAddressWithOffset(GetGridAddress(), 0, -yOffset, LandingGridAddress))
+			{
+				if (auto TileBelow = Grid->GetTileFromGridAddress(LandingGridAddress))
+				{
+					if (TileBelow->TileState == EMatch3TileState::Falling)
+					{
+						// Keep falling on top of a falling tile.
+						++heightAboveBottom;
+						continue;
+					}
+					else if (TileBelow->TileState == EMatch3TileState::Removed)
+					{
+						// The tile below this one is being removed.
+						continue;
+					}
+				}
+				else
+				{
+					// The space below is empty, but is on the grid. We can fall through this space from above.
+					continue;
+				}
+			}
+
+			// This space is off the grid or contains a tile that is staying. Go back a space and start falling.
+			yOffset -= heightAboveBottom;
+			Grid->GetGridAddressWithOffset(GetGridAddress(), 0, -yOffset, LandingGridAddress);
+			break;
+		}
+
+		fallDistance = Grid->TileSize.Y * yOffset;
+		FallingEndLocation = FallingStartLocation;
+		FallingEndLocation.Z -= fallDistance;
+	}
+	else
+	{
+		// Fall from where we are physically to where we are supposed to be on the grid.
+		LandingGridAddress = GetGridAddress();
+	}
+
+	// TODO: Complete!
 }
 
 void AMatch3GridTile::FinishFalling()

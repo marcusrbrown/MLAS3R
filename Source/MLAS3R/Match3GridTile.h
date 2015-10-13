@@ -103,4 +103,8 @@ protected:
 	/** Location on the grid as a 1D key/value. To find the neighbors of this tile, ask the grid. */
 	UPROPERTY(BlueprintReadOnly, Category = "Match 3 Tile")
 	int32 GridAddress;
+
+	/** Location on the grid where the tile is falling towards. */
+	UPROPERTY(BlueprintReadOnly, Category = "Match 3 Tile")
+	int32 LandingGridAddress;
 };

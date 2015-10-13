@@ -144,6 +144,11 @@ int32 AMatch3Grid::SelectTileFromLibrary() const
 
 AMatch3GridTile* AMatch3Grid::GetTileFromGridAddress(int32 GridAddress) const
 {
+	checkSlow(TileSize.X > 0.0f);
+	checkSlow(TileSize.Y > 0.0f);
+	checkSlow(GridWidth > 0);
+	checkSlow(GridHeight > 0);
+
 	return nullptr;
 }
 
@@ -169,7 +174,23 @@ bool AMatch3Grid::AreAddressesNeighbors(int32 GridAddressA, int32 GridAddressB) 
 
 void AMatch3Grid::OnTileFallingFinished(AMatch3GridTile* Tile, int32 LandingGridAddress)
 {
+	int32 returnGridAddress;
 
+	if (GetGridAddressWithOffset(Tile->GetGridAddress(), 0, 0, returnGridAddress))
+	{
+		// Remove the tile from it's original position.
+		if (Tiles[returnGridAddress] == Tile)
+		{
+			Tiles[returnGridAddress] = nullptr;
+		}
+	}
+
+	if (GetGridAddressWithOffset(LandingGridAddress, 0, 0, returnGridAddress))
+	{
+		Tiles[returnGridAddress] = Tile;
+		// TODO: marcus@HV: Verify.
+		Tile->SetGridAddress(returnGridAddress);
+	}
 }
 
 void AMatch3Grid::OnTileMatchingFinished(AMatch3GridTile* Tile)
