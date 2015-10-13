@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MLAS3R.h"
-#include "CoreGameMode.h"
+#include "MLAS3RGameMode.h"
 #include "Match3Grid.h"
 #include "Match3GridTile.h"
 

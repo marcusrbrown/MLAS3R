@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MLAS3R.h"
-#include "CoreGameMode.h"
+#include "MLAS3RGameMode.h"
 
-void ACoreGameMode::BeginPlay()
+void AMLAS3RGameMode::BeginPlay()
 {
 	if(GEngine)
 	{
