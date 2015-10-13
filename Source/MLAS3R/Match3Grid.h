@@ -39,6 +39,10 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
+	AMatch3GridTile* CreateTile(AActor* TileActor, FVector SpawnLocation, int32 SpawnGridAddress, int TileTypeID);
+
+	int32 SelectTileFromLibrary() const;
+
 	AMatch3GridTile* GetTileFromGridAddress(int32 GridAddress) const;
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (ExpandEnumAsExecs = "MoveType"), Category = "Match 3 Tile")
@@ -138,5 +142,6 @@ private:
 	/** Indicates that we are waiting to complete a swap move. */
 	uint32 bPendingSwapMove : 1;
 
+	/** Indicates that the pending swap move will succeed. */
 	uint32 bPendingSwapMoveSuccess : 1;
 };

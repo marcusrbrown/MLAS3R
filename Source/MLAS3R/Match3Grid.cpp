@@ -25,13 +25,121 @@ void AMatch3Grid::BeginPlay()
 
 	Tiles.Empty(GridWidth * GridHeight);
 	Tiles.AddUninitialized(Tiles.Max());
+
+	for (int32 column = 0; column < GridWidth; ++column)
+	{
+		for (int32 row = 0; row < GridHeight; ++row)
+		{
+			int32 gridAddress;
+			GetGridAddressWithOffset(0, column, row, gridAddress);
+			FVector spawnLocation = GetLocationFromGridAddress(gridAddress);
+
+			int32 tileID;
+			for (;;)
+			{
+				tileID = SelectTileFromLibrary();
+
+				// TODO: marcus@HV: Reflow this logic (originally from the Match 3 training video.
+
+				if ((column >= MinimumMatchLength - 1) || (row >= MinimumMatchLength - 1))
+				{
+					int32 testAddress = 0;
+					int32 tileOffset = 0;
+
+					for (int32 horizontal = 0; horizontal < 2; ++horizontal)
+					{
+						for (tileOffset = 1; tileOffset < MinimumMatchLength; ++tileOffset)
+						{
+							checkSlow(GetTileFromGridAddress(testAddress));
+
+							if (!GetGridAddressWithOffset(0, column - (horizontal ? tileOffset : 0), row - (horizontal ? 0 : tileOffset), testAddress))
+							{
+								// Address is not in a matching run, or off the edge of a map, so stop checking.
+								break;
+							}
+						}
+
+						if (tileOffset == MinimumMatchLength)
+						{
+							// The loop terminated normally.
+							break;
+						}
+					}
+
+					if (tileOffset < MinimumMatchLength)
+					{
+						// We didn't find a matching run in either direction, so we can place a tile at this location.
+						break;
+					}
+				}
+				else
+				{
+					// This tile is too close to the edge to be worth checking.
+					break;
+				}
+			}
+
+			CreateTile(nullptr, spawnLocation, gridAddress, tileID);
+		}
+	}
 }
 
 // Called every frame
 void AMatch3Grid::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+}
 
+AMatch3GridTile* AMatch3Grid::CreateTile(AActor* TileActor, FVector SpawnLocation, int32 SpawnGridAddress, int TileTypeID)
+{
+	if (TileToSpawn)
+	{
+		checkSlow(TileLibrary.IsValidIndex(TileTypeID));
+		checkSlow(TileLibrary[TileTypeID] != nullptr);
+
+		auto* const world = GetWorld();
+		if (world)
+		{
+			FActorSpawnParameters spawnParams;
+			spawnParams.Owner = this;
+			spawnParams.Instigator = Instigator;
+
+			// TODO: marcus@HV: Tiles currently don't rotate.
+			FRotator spawnRotation = FRotator(0.0f, 0.0f, 0.0f);
+			auto* const newTile = world->SpawnActor<AMatch3GridTile>(TileToSpawn, SpawnLocation, spawnRotation, spawnParams);
+			// TODO: marcus@HV: Set up rendering.
+			newTile->TileTypeID = TileTypeID;
+			newTile->Abilities = TileLibrary[TileTypeID].Abilities;
+			newTile->SetGridAddress(SpawnGridAddress);
+			Tiles[SpawnGridAddress] = newTile;
+			return newTile;
+		}
+	}
+
+	return nullptr;
+}
+
+int32 AMatch3Grid::SelectTileFromLibrary() const
+{
+	float normalizingFactor = 0.0f;
+	for (auto& tileBase : TileLibrary)
+	{
+		normalizingFactor += tileBase.Probability;
+	}
+
+	float testNumber = FMath::RandRange(0.0f, normalizingFactor);
+	float compareTo = 0.0f;
+	for (int32 arrayChecked = 0; arrayChecked != TileLibrary.Num(); ++arrayChecked)
+	{
+		compareTo += TileLibrary[arrayChecked].Probability;
+
+		if (testNumber <= compareTo)
+		{
+			return arrayChecked;
+		}
+	}
+
+	return 0;
 }
 
 AMatch3GridTile* AMatch3Grid::GetTileFromGridAddress(int32 GridAddress) const
