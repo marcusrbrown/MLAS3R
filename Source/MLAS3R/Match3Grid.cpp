@@ -52,16 +52,16 @@ void AMatch3Grid::BeginPlay()
 						{
 							checkSlow(GetTileFromGridAddress(testAddress));
 
-							if (!GetGridAddressWithOffset(0, column - (horizontal ? tileOffset : 0), row - (horizontal ? 0 : tileOffset), testAddress))
+							if (!GetGridAddressWithOffset(0, column - (horizontal ? tileOffset : 0), row - (horizontal ? 0 : tileOffset), testAddress) || (GetTileFromGridAddress(testAddress)->TileTypeID != tileID))
 							{
-								// Address is not in a matching run, or off the edge of a map, so stop checking.
+								// Not in a matching run, or off the edge of a map, so stop checking this axis.
 								break;
 							}
 						}
 
 						if (tileOffset == MinimumMatchLength)
 						{
-							// The loop terminated normally.
+							// We made it through the whole "check for matching run" loop. This tile completes a scoring run. Pick a new tile type and test again.
 							break;
 						}
 					}
@@ -144,26 +144,60 @@ int32 AMatch3Grid::SelectTileFromLibrary() const
 
 AMatch3GridTile* AMatch3Grid::GetTileFromGridAddress(int32 GridAddress) const
 {
-	checkSlow(TileSize.X > 0.0f);
-	checkSlow(TileSize.Y > 0.0f);
 	checkSlow(GridWidth > 0);
 	checkSlow(GridHeight > 0);
+
+	if ((GridAddress >= 0) && (GridAddress < (GridWidth * GridHeight)))
+	{
+		return Tiles[GridAddress];
+	}
 
 	return nullptr;
 }
 
 FVector AMatch3Grid::GetLocationFromGridAddress(int32 GridAddress)
 {
-	return FVector();
+	return GetLocationFromGridAddress(GridAddress, 0, 0);
 }
 
 FVector AMatch3Grid::GetLocationFromGridAddress(int32 GridAddress, int32 XOffsetInTiles, int32 YOffsetInTiles)
 {
-	return FVector();
+	checkSlow(TileSize.X > 0.0f);
+	checkSlow(TileSize.Y > 0.0f);
+	checkSlow(GridWidth > 0);
+	checkSlow(GridHeight > 0);
+
+	int32 relativeGridAddress;
+	if (!GetGridAddressWithOffset(GridAddress, XOffsetInTiles, YOffsetInTiles, relativeGridAddress))
+	{
+		// TODO: marcus@HV: Rework this logic.
+	}
+
+	int32 column = GridAddress / GridWidth;
+	int32 row = GridAddress % GridHeight;
+	float x = GetActorLocation().X + (column * TileSize.X);
+	float y = GetActorLocation().Y + (row * TileSize.Y);
+
+	x += TileSize.X * 0.5f;
+	y += TileSize.Y * 0.5f;
+
+	return FVector(x, y, 0.0f);
 }
 
 bool AMatch3Grid::GetGridAddressWithOffset(int32 GridAddress, int32 XOffset, int32 YOffset, int32& RelativeGridAddress) const
 {
+	checkSlow(GridWidth > 0);
+	checkSlow(GridHeight > 0);
+	checkSlow((GridAddress >= 0) && (GridAddress < (GridWidth * GridHeight)));
+
+	int32 gridOffset = (XOffset * GridWidth) + YOffset;
+	int32 testAddress = GridAddress + gridOffset;
+	if ((testAddress >= 0) && (testAddress < (GridWidth * GridHeight)))
+	{
+		RelativeGridAddress = testAddress;
+		return true;
+	}
+
 	return false;
 }
 

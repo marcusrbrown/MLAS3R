@@ -16,6 +16,9 @@ struct FTileType
 	float Probability;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMesh* TileMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FTileAbilities Abilities;
 
 	FTileType()
