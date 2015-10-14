@@ -38,7 +38,7 @@ protected:
 };
 
 UCLASS(Blueprintable)
-class MLAS3R_API AMatch3GridTile : public AActor
+class MLAS3R_API AMatch3GridTile : public AStaticMeshActor
 {
 	GENERATED_BODY()
 	

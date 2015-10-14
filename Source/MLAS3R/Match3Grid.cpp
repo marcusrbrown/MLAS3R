@@ -80,7 +80,7 @@ void AMatch3Grid::BeginPlay()
 				}
 			}
 
-			CreateTile(nullptr, spawnLocation, gridAddress, tileID);
+			CreateTile(TileLibrary[tileID].TileMesh, spawnLocation, gridAddress, tileID);
 		}
 	}
 }
@@ -91,7 +91,7 @@ void AMatch3Grid::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 }
 
-AMatch3GridTile* AMatch3Grid::CreateTile(AActor* TileActor, FVector SpawnLocation, int32 SpawnGridAddress, int TileTypeID)
+AMatch3GridTile* AMatch3Grid::CreateTile(UStaticMesh* StaticMesh, FVector SpawnLocation, int32 SpawnGridAddress, int TileTypeID)
 {
 	if (TileToSpawn)
 	{
@@ -108,7 +108,8 @@ AMatch3GridTile* AMatch3Grid::CreateTile(AActor* TileActor, FVector SpawnLocatio
 			// TODO: marcus@HV: Tiles currently don't rotate.
 			FRotator spawnRotation = FRotator(0.0f, 0.0f, 0.0f);
 			auto* const newTile = world->SpawnActor<AMatch3GridTile>(TileToSpawn, SpawnLocation, spawnRotation, spawnParams);
-			// TODO: marcus@HV: Set up rendering.
+			newTile->GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
+			newTile->GetStaticMeshComponent()->SetStaticMesh(StaticMesh);
 			newTile->TileTypeID = TileTypeID;
 			newTile->Abilities = TileLibrary[TileTypeID].Abilities;
 			newTile->SetGridAddress(SpawnGridAddress);

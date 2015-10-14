@@ -42,7 +42,7 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-	AMatch3GridTile* CreateTile(AActor* TileActor, FVector SpawnLocation, int32 SpawnGridAddress, int TileTypeID);
+	AMatch3GridTile* CreateTile(UStaticMesh* StaticMesh, FVector SpawnLocation, int32 SpawnGridAddress, int TileTypeID);
 
 	int32 SelectTileFromLibrary() const;
 
