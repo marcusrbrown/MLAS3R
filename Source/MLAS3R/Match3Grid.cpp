@@ -50,7 +50,8 @@ void AMatch3Grid::BeginPlay()
 					{
 						for (tileOffset = 1; tileOffset < MinimumMatchLength; ++tileOffset)
 						{
-							checkSlow(GetTileFromGridAddress(testAddress));
+							// TODO: marcus@HV: Epic had this in their training code, I don't think it's valid to call this before the GetGridAddressWithOffset() call below.
+							//checkSlow(GetTileFromGridAddress(testAddress));
 
 							if (!GetGridAddressWithOffset(0, column - (horizontal ? tileOffset : 0), row - (horizontal ? 0 : tileOffset), testAddress) || (GetTileFromGridAddress(testAddress)->TileTypeID != tileID))
 							{
@@ -173,8 +174,8 @@ FVector AMatch3Grid::GetLocationFromGridAddress(int32 GridAddress, int32 XOffset
 		// TODO: marcus@HV: Rework this logic.
 	}
 
-	int32 column = GridAddress / GridWidth;
-	int32 row = GridAddress % GridHeight;
+	int32 column = GridAddress % GridWidth;
+	int32 row = GridAddress / GridWidth;
 	float x = GetActorLocation().X + (column * TileSize.X);
 	float y = GetActorLocation().Y + (row * TileSize.Y);
 
@@ -190,11 +191,15 @@ bool AMatch3Grid::GetGridAddressWithOffset(int32 GridAddress, int32 XOffset, int
 	checkSlow(GridHeight > 0);
 	checkSlow((GridAddress >= 0) && (GridAddress < (GridWidth * GridHeight)));
 
-	int32 gridOffset = (XOffset * GridWidth) + YOffset;
-	int32 testAddress = GridAddress + gridOffset;
-	if ((testAddress >= 0) && (testAddress < (GridWidth * GridHeight)))
+	// Convert the grid address back to 2D coordinates before applying the offsets.
+	int32 column = GridAddress % GridWidth;
+	int32 row = GridAddress / GridWidth;
+	column += XOffset;
+	row += YOffset;
+
+	if ((column >= 0) && (column < GridWidth) && (row >= 0) && (row < GridHeight))
 	{
-		RelativeGridAddress = testAddress;
+		RelativeGridAddress = row * GridWidth + column;
 		return true;
 	}
 
