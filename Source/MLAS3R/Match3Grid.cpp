@@ -119,9 +119,7 @@ AMatch3GridTile* AMatch3Grid::CreateTile(UStaticMesh* StaticMesh, FVector SpawnL
 			spawnParams.Owner = this;
 			spawnParams.Instigator = Instigator;
 
-			// TODO: marcus@HV: Tiles currently don't rotate.
-			FRotator spawnRotation = FRotator(0.0f, 0.0f, 0.0f);
-			auto* const newTile = world->SpawnActor<AMatch3GridTile>(TileToSpawn, SpawnLocation, spawnRotation, spawnParams);
+			auto* const newTile = world->SpawnActor<AMatch3GridTile>(TileToSpawn, SpawnLocation, DefaultSpawnRotation, spawnParams);
 			newTile->GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
 			newTile->GetStaticMeshComponent()->SetStaticMesh(StaticMesh);
 			newTile->TileTypeID = TileTypeID;
