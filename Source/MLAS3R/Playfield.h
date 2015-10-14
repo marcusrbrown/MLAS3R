@@ -148,6 +148,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	AActor* SpawnEnemyBulletAtLocation(const FString& type, const FVector& location);
 	
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	void SetPlayerIsDead(bool value);
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Levels")
 	TArray<UDataTable*> Levels;
 	
@@ -181,6 +184,8 @@ private:
 	float PlayTime;
 	
 	float SpeedMultiplier;
+	
+	bool PlayerIsDead;
 	
 	TArray<FPlayfieldEnemyData> Enemies;
 	

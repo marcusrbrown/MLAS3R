@@ -13,7 +13,7 @@ namespace
 }
 
 // Sets default values
-APlayfield::APlayfield() : CurrentLevel(0), CurrentRow(0), PlayTime(0.0f), SpeedMultiplier(1.0f)
+APlayfield::APlayfield() : CurrentLevel(0), CurrentRow(0), PlayTime(0.0f), SpeedMultiplier(1.0f), PlayerIsDead(false)
 {
 	// Set this actor to call Tick() every frame.  You can tu  rn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -78,7 +78,7 @@ void APlayfield::Tick( float DeltaTime )
 	{
 		// Grab a row, if the row doesn't exist, loop around and increment our speed mulitplier (once all enemies are dead)
 		auto row = ((UDataTable*)Levels[CurrentLevel])->FindRow<FPlayfieldSpawnTableRow>(*FString::FromInt(CurrentRow), TEXT(""), false);
-		if (row == nullptr && Enemies.Num() == 0)
+		if (row == nullptr && Enemies.Num() == 0 && !PlayerIsDead) // TODO: Can Spawn Helper Method
 		{
 			CurrentRow = 0;
 			SpeedMultiplier += 0.25;
@@ -322,6 +322,11 @@ AActor* APlayfield::SpawnEnemyBulletAtLocation(const FString& type, const FVecto
 	}
 	
 	return nullptr;
+}
+
+void APlayfield::SetPlayerIsDead(bool value)
+{
+	PlayerIsDead = value;
 }
 
 USplineComponent* APlayfield::FindSplineByName(FString name)
