@@ -59,7 +59,7 @@ void AMatch3GridTile::TilePress_Mouse()
 void AMatch3GridTile::TileEnter(ETouchIndex::Type FingerIndex)
 {
 	// TODO: marcus@HV: We could also check Grid->AreAddressesNeighbors() to enforce that two tiles must be adjacent to swap, ala Bejeweled.
-	if (Grid && (Grid->SelectedTile) != nullptr)
+	if (Grid && (Grid->SelectedTile != nullptr))
 	{
 		TilePress(FingerIndex);
 	}
