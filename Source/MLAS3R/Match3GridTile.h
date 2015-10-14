@@ -53,11 +53,17 @@ public:
 	virtual void Tick( float DeltaSeconds ) override;
 
 	UFUNCTION()
-	void TileSelected();
+	void TileEnter_Mouse();
 
 	UFUNCTION()
-	void TileSelectedByTouch(ETouchIndex::Type FingerIndex);
-	
+	void TilePress_Mouse();
+
+	UFUNCTION()
+	void TileEnter(ETouchIndex::Type FingerIndex);
+
+	UFUNCTION()
+	void TilePress(ETouchIndex::Type FingerIndex);
+
 	/** Called when a match has been made. Reports the EMatch3MoveType that created the match. */
 	UFUNCTION(BlueprintNativeEvent, Category = "Match 3 Game Events")
 	void OnMatched(EMatch3MoveType MoveType);

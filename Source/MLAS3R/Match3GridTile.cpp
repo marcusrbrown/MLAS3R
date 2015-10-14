@@ -24,28 +24,53 @@ void AMatch3GridTile::BeginPlay()
 
 	Grid = Cast<AMatch3Grid>(GetOwner());
 
-	OnClicked.AddUniqueDynamic(this, &AMatch3GridTile::TileSelected);
-	OnInputTouchBegin.AddUniqueDynamic(this, &AMatch3GridTile::TileSelectedByTouch);
+	// Mouse input.
+	OnClicked.AddUniqueDynamic(this, &AMatch3GridTile::TilePress_Mouse);
+	OnBeginCursorOver.AddUniqueDynamic(this, &AMatch3GridTile::TileEnter_Mouse);
+
+	// Touch input.
+	OnInputTouchBegin.AddUniqueDynamic(this, &AMatch3GridTile::TilePress);
+	OnInputTouchEnter.AddUniqueDynamic(this, &AMatch3GridTile::TileEnter);
 }
 
 // Called every frame
 void AMatch3GridTile::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
-
 }
 
-void AMatch3GridTile::TileSelected()
+void AMatch3GridTile::TileEnter_Mouse()
+{
+	// This is to simulate finger-swiping, so ignore if the mouse isn't clicked.
+	if (APlayerController* pc = UGameplayStatics::GetPlayerController(this, 0))
+	{
+		if (pc->IsInputKeyDown(EKeys::LeftMouseButton))
+		{
+			TileEnter(ETouchIndex::Touch1);
+		}
+	}
+}
+
+void AMatch3GridTile::TilePress_Mouse()
+{
+	TilePress(ETouchIndex::Touch1);
+}
+
+void AMatch3GridTile::TileEnter(ETouchIndex::Type FingerIndex)
+{
+	// TODO: marcus@HV: We could also check Grid->AreAddressesNeighbors() to enforce that two tiles must be adjacent to swap, ala Bejeweled.
+	if (Grid && (Grid->SelectedTile) != nullptr)
+	{
+		TilePress(FingerIndex);
+	}
+}
+
+void AMatch3GridTile::TilePress(ETouchIndex::Type FingerIndex)
 {
 	if (Grid)
 	{
 		Grid->OnTileWasSelected(this);
 	}
-}
-
-void AMatch3GridTile::TileSelectedByTouch(ETouchIndex::Type FingerIndex)
-{
-	TileSelected();
 }
 
 void AMatch3GridTile::OnMatched_Implementation(EMatch3MoveType MoveType)

@@ -27,9 +27,6 @@ AMatch3Grid::AMatch3Grid()
 	Bounds->ShapeColor = DefaultBoundsColor;
 	Bounds->InitBoxExtent(FVector(40.0f, 40.0f, 40.0f));
 	RootComponent = Bounds;
-
-	// This doesn't collide
-	SetActorEnableCollision(false);
 }
 
 // Called when the game starts or when spawned
