@@ -26,12 +26,29 @@ APlayfield::APlayfield() : CurrentLevel(0), CurrentRow(0), PlayTime(0.0f), Speed
 	
 	// This doesn't collide
 	SetActorEnableCollision(false);
+	
+	// Init sane grid defaults
+	Grid.Rows = 4;
+	Grid.Columns = 10;
+	Grid.CellExtent = FVector(450.0f, 450.0f, 0.0f);
+	Grid.Padding = FVector(10.0f, 10.0f, 0.0f);
+	Grid.Offset = FVector(0.0f, 600.0f, 0.0f);
+	Grid.Pivot = FVector(0.0f, 0.0f, 0.0f);
 }
 
 // Called when the game starts or when spawned
 void APlayfield::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	// Calculate the Grid
+	Grid.Offset += GetActorLocation() - Bounds->GetScaledBoxExtent();
+	Grid.Width = Grid.CellExtent.X * Grid.Columns + (Grid.Padding.X * Grid.Columns);
+	Grid.Height = Grid.CellExtent.Y * Grid.Rows + (Grid.Padding.Y * Grid.Rows);
+	Grid.Offset.X += ((Bounds->GetScaledBoxExtent().X * 2) - Grid.Width) * 0.5f;
+	Grid.LerpAlpha = 0.5f;
+	Grid.LerpAlphaDirection = 1.0f;
+	Grid.LerpDuration = 5.0f;
 }
 
 // Called every frame
@@ -41,12 +58,27 @@ void APlayfield::Tick( float DeltaTime )
 	
 	PlayTime += DeltaTime * SpeedMultiplier;
 	
+	// Update the grid pivot
+	{
+		Grid.LerpAlpha += Grid.LerpAlphaDirection * DeltaTime * SpeedMultiplier;
+		float alpha = Grid.LerpAlpha / Grid.LerpDuration;
+		alpha = FMath::Clamp(alpha, 0.0f, 1.0f);
+		
+		if (alpha >= 1.0f) Grid.LerpAlphaDirection = -1.0f;
+		if (alpha <= 0.0f) Grid.LerpAlphaDirection = 1.0f;
+		
+		float start = GetActorLocation().X + Grid.Padding.X + Grid.CellExtent.X;
+		float end = (GetActorLocation() + (Bounds->GetScaledBoxExtent() * 0.5f)).X - Grid.Padding.X - Grid.CellExtent.X;
+		float distance = end - start;
+		Grid.Pivot = FMath::Lerp(FVector(-distance, 0.0f, 0.0f), FVector(distance, 0.0f, 0.0f), alpha);
+	}
+	
 	// Spawn the enemies and grab their spline
 	if (CurrentLevel < Levels.Num())
 	{
-		// Grab a row, if the row doesn't exist, loop around and increment our speed mulitplier
+		// Grab a row, if the row doesn't exist, loop around and increment our speed mulitplier (once all enemies are dead)
 		auto row = ((UDataTable*)Levels[CurrentLevel])->FindRow<FPlayfieldSpawnTableRow>(*FString::FromInt(CurrentRow), TEXT(""), false);
-		if (row == nullptr)
+		if (row == nullptr && Enemies.Num() == 0)
 		{
 			CurrentRow = 0;
 			SpeedMultiplier += 0.25;
@@ -82,40 +114,80 @@ void APlayfield::Tick( float DeltaTime )
 			continue;
 		}
 		
-		// Calculate spline t value
-		float length = enemyState.IntroSpline->GetSplineLength();
-		float splinePosition = enemyState.Speed * enemyState.DeltaTime;
-		float clampedPosition = FMath::Clamp<float>(splinePosition, 0.0f, length);
-		float bulletTime = clampedPosition / length;
-		
-		// Update the enemy on the spline
-		auto location = enemyState.IntroSpline->GetLocationAtDistanceAlongSpline(clampedPosition, ESplineCoordinateSpace::World);
-		enemyState.Enemy->SetActorLocation(location);
-		
-		// Check to see if we need to fire
-		while (enemyState.IntroBulletIndex < enemyState.IntroBullets.Num())
+		switch (enemyState.State)
 		{
-			float t = enemyState.IntroBullets[enemyState.IntroBulletIndex];
-			if (bulletTime >= t)
+			case EPlayfieldEnemyState::Intro:
 			{
-				UE_LOG(LogTemp, Log, TEXT("SPAWNING BULLET %d @ %f"), enemyState.IntroBulletIndex, t);
-				auto bulletLocation = enemyState.IntroSpline->GetLocationAtDistanceAlongSpline(t * length, ESplineCoordinateSpace::World);
-				enemyState.IntroBulletIndex++;
-				SpawnEnemyBulletAtLocation(enemyState.Type, bulletLocation);
-			}
-			else
+				// Calculate spline t value
+				float length = enemyState.IntroSpline->GetSplineLength();
+				float splinePosition = enemyState.Speed * enemyState.DeltaTime;
+				float clampedPosition = FMath::Clamp(splinePosition, 0.0f, length);
+				float bulletTime = clampedPosition / length;
+				
+				// Update the enemy on the spline
+				auto location = enemyState.IntroSpline->GetLocationAtDistanceAlongSpline(clampedPosition, ESplineCoordinateSpace::World);
+				enemyState.Enemy->SetActorLocation(location);
+				
+				// Check to see if we need to fire
+				while (enemyState.IntroBulletIndex < enemyState.IntroBullets.Num())
+				{
+					float t = enemyState.IntroBullets[enemyState.IntroBulletIndex];
+					if (bulletTime >= t)
+					{
+						UE_LOG(LogTemp, Log, TEXT("SPAWNING BULLET %d @ %f"), enemyState.IntroBulletIndex, t);
+						auto bulletLocation = enemyState.IntroSpline->GetLocationAtDistanceAlongSpline(t * length, ESplineCoordinateSpace::World);
+						enemyState.IntroBulletIndex++;
+						SpawnEnemyBulletAtLocation(enemyState.Type, bulletLocation);
+					}
+					else
+					{
+						break;
+					}
+				}
+				
+				// Update the enemies delta time
+				enemyState.DeltaTime += DeltaTime;
+				
+				// Move the enemies to the grid
+				if (splinePosition > length) {
+					enemyState.State = EPlayfieldEnemyState::ToFormation;
+					enemyState.LerpAlpha = 0.0f;
+					//enemyState.Enemy->Destroy();
+					//doneEnemies.Push(Iter.GetIndex());
+				}
+			} break;
+				
+			case EPlayfieldEnemyState::ToFormation:
 			{
-				break;
-			}
-		}
-		
-		// Update the enemies delta time
-		enemyState.DeltaTime += DeltaTime;
-		
-		// Remove enemies that have traversed the spline
-		if (splinePosition > length) {
-			enemyState.Enemy->Destroy();
-			doneEnemies.Push(Iter.GetIndex());
+				enemyState.LerpAlpha += DeltaTime;
+				float alpha = enemyState.LerpAlpha / enemyState.LerpDuration;
+				FMath::Clamp(alpha, 0.0f, 1.0f);
+				
+				FVector target = GetGridLocationFromAddress(enemyState.GridAddress);
+				target = FMath::Lerp(enemyState.Enemy->GetActorLocation(), target, alpha);
+				enemyState.Enemy->SetActorLocation(target);
+				
+				if (enemyState.LerpAlpha >= 1.0f)
+				{
+					enemyState.State = EPlayfieldEnemyState::Formation;
+				}
+			} break;
+				
+			case EPlayfieldEnemyState::Formation:
+			{
+				FVector target = GetGridLocationFromAddress(enemyState.GridAddress);
+				enemyState.Enemy->SetActorLocation(target);
+			} break;
+				
+			case EPlayfieldEnemyState::ToAttack:
+			{
+				
+			} break;
+				
+			case EPlayfieldEnemyState::Attack:
+			{
+				
+			} break;
 		}
 	}
 	
@@ -204,6 +276,9 @@ AActor* APlayfield::SpawnEnemyFromTableRow(const FPlayfieldSpawnTableRow& row)
 	ParseBulletString(row.AttackBullets, enemy.AttackBullets);
 	enemy.AttackBulletIndex = 0;
 	
+	enemy.LerpAlpha = 0.0f;
+	enemy.LerpDuration = enemy.Speed / 1000.0f;
+	
 	// TODO: Replace with blueprint native function
 	if (enemy.Type == FString("RedEnemy"))
 	{
@@ -267,4 +342,22 @@ void APlayfield::ParseBulletString(const FString& bulletString, TArray<float>& O
 	{
 		OutArray.Push(FCString::Atof(*value));
 	}
+}
+
+FVector APlayfield::GetGridLocationFromAddress(int32 address)
+{
+	check(address >= 0 && address < Grid.Rows * Grid.Columns);
+	
+	int32 column = address % Grid.Columns;
+	int32 row  = address / Grid.Columns;
+	
+	// Calculate x,y in grid
+	float x = Grid.Pivot.X + Grid.Offset.X + (column * Grid.CellExtent.X + (Grid.Padding.X * column));
+	float y = Grid.Pivot.Y + Grid.Offset.Y + (row * Grid.CellExtent.Y + (Grid.Padding.Y * row));
+	
+	// Center in cell
+	x += Grid.CellExtent.X * 0.5f;
+	y += Grid.CellExtent.Y * 0.5f;
+	
+	return FVector(x, y, 0.0f);
 }
