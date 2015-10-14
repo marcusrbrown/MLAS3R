@@ -59,6 +59,50 @@ struct MLAS3R_API FPlayfieldEnemyData
 	UPROPERTY()
 	int32 AttackBulletIndex;
 	
+	UPROPERTY()
+	float LerpAlpha;
+	
+	UPROPERTY()
+	float LerpDuration;
+};
+
+USTRUCT()
+struct MLAS3R_API FPlayfieldGridData
+{
+	GENERATED_BODY()
+	
+	UPROPERTY()
+	FVector CellExtent;
+	
+	UPROPERTY()
+	int32 Width;
+	
+	UPROPERTY()
+	int32 Height;
+	
+	UPROPERTY()
+	int32 Rows;
+	
+	UPROPERTY()
+	int32 Columns;
+	
+	UPROPERTY()
+	FVector Pivot;
+	
+	UPROPERTY()
+	FVector Offset;
+	
+	UPROPERTY()
+	FVector Padding;
+	
+	UPROPERTY()
+	float LerpAlpha;
+	
+	UPROPERTY()
+	float LerpAlphaDirection;
+	
+	UPROPERTY()
+	float LerpDuration;
 };
 
 
@@ -122,6 +166,13 @@ public:
 	virtual void EditorApplyScale(const FVector& DeltaScale, const FVector* PivotLocation, bool bAltDown, bool bShiftDown, bool bCtrlDown) override;
 #endif
 	
+protected:
+	USplineComponent* FindSplineByName(FString name);
+	
+	void ParseBulletString(const FString& bulletString, TArray<float>& OutArray);
+	
+	FVector GetGridLocationFromAddress(int32 address);
+	
 private:
 	int32 CurrentLevel;
 	
@@ -133,7 +184,5 @@ private:
 	
 	TArray<FPlayfieldEnemyData> Enemies;
 	
-	USplineComponent* FindSplineByName(FString name);
-	
-	void ParseBulletString(const FString& bulletString, TArray<float>& OutArray);
+	FPlayfieldGridData Grid;
 };

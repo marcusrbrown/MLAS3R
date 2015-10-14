@@ -1,22 +1,17 @@
 Name,EnemyType,StartTime,Speed,GridAddress,IntroSpline,IntroBullets,AttackSpline,AttackBullets
-0,RedEnemy,1000,1500,50,IntroLeft,"0.15, 0.25, 0.35",AttackLeft,"0.10, 0.20, 0.80, 0.90"
-1,RedEnemy,1500,1500,49,IntroLeft,"0.15, 0.25, 0.35",AttackLeft,"0.10, 0.20, 0.80, 0.90"
-2,RedEnemy,2000,1500,48,IntroLeft,"0.15, 0.25, 0.35",AttackLeft,"0.10, 0.20, 0.80, 0.90"
-3,BlueEnemy,2000,1500,47,IntroRight,"0.15, 0.25, 0.38",AttackRight,"0.10, 0.20, 0.80, 0.90"
-4,BlueEnemy,2500,1500,46,IntroRight,"0.15, 0.25, 0.38",AttackRight,"0.10, 0.20, 0.80, 0.90"
-5,BlueEnemy,3000,1500,45,IntroRight,"0.15, 0.25, 0.38",AttackRight,"0.10, 0.20, 0.80, 0.90"
-6,GreenEnemy,5000,1500,44,CenterCircle,0.33,AttackCenterBreakLeft,0.8
-7,GreenEnemy,5250,1500,43,CenterCircle,0.34,AttackCenterBreakRight,0.8
-8,GreenEnemy,5500,1500,42,CenterCircle,0.35,AttackCenterBreakLeft,0.8
-9,GreenEnemy,5750,1500,41,CenterCircle,0.36,AttackCenterBreakRight,0.8
-10,GreenEnemy,6000,1500,40,CenterCircle,0.37,AttackCenterBreakLeft,0.8
-11,GreenEnemy,6250,1500,39,CenterCircle,0.38,AttackCenterBreakRight,0.8
-12,GreenEnemy,6500,1500,38,CenterCircle,0.39,AttackCenterBreakLeft,0.8
-13,GreenEnemy,6750,1500,37,CenterCircle,0.4,AttackCenterBreakRight,0.8
-14,GreenEnemy,7000,1500,36,CenterCircle,0.41,AttackCenterBreakLeft,0.8
-15,GreenEnemy,7250,1500,35,CenterCircle,0.42,AttackCenterBreakRight,0.8
-16,GreenEnemy,7500,1500,34,CenterCircle,0.43,AttackCenterBreakLeft,0.8
-17,GreenEnemy,7750,1500,33,CenterCircle,0.44,AttackCenterBreakRight,0.8
-18,GreenEnemy,8000,1500,32,CenterCircle,0.45,AttackCenterBreakLeft,0.8
-19,GreenEnemy,8250,1500,31,CenterCircle,0.46,AttackCenterBreakRight,0.8
-20,GreenEnemy,8500,1500,30,CenterCircle,0.47,AttackCenterBreakLeft,0.8
+0,RedEnemy,1000,2000,37,IntroLeft,"0.15, 0.25, 0.35",AttackLeft,"0.10, 0.20, 0.80, 0.90"
+1,RedEnemy,1500,2000,36,IntroLeft,"0.15, 0.25, 0.35",AttackLeft,"0.10, 0.20, 0.80, 0.90"
+2,RedEnemy,2000,2000,35,IntroLeft,"0.15, 0.25, 0.35",AttackLeft,"0.10, 0.20, 0.80, 0.90"
+3,BlueEnemy,2000,2000,34,IntroRight,"0.15, 0.25, 0.38",AttackRight,"0.10, 0.20, 0.80, 0.90"
+4,BlueEnemy,2500,2000,33,IntroRight,"0.15, 0.25, 0.38",AttackRight,"0.10, 0.20, 0.80, 0.90"
+5,BlueEnemy,3000,2000,32,IntroRight,"0.15, 0.25, 0.38",AttackRight,"0.10, 0.20, 0.80, 0.90"
+6,GreenEnemy,5000,2000,29,CenterCircle,0.33,AttackCenterBreakLeft,0.8
+7,GreenEnemy,5250,2000,28,CenterCircle,0.34,AttackCenterBreakRight,0.8
+8,GreenEnemy,5500,2000,27,CenterCircle,0.35,AttackCenterBreakLeft,0.8
+9,GreenEnemy,5750,2000,26,CenterCircle,0.36,AttackCenterBreakRight,0.8
+10,GreenEnemy,6000,2000,25,CenterCircle,0.37,AttackCenterBreakLeft,0.8
+11,GreenEnemy,6250,2000,24,CenterCircle,0.38,AttackCenterBreakRight,0.8
+12,GreenEnemy,6500,2000,23,CenterCircle,0.39,AttackCenterBreakLeft,0.8
+13,GreenEnemy,6750,2000,22,CenterCircle,0.4,AttackCenterBreakRight,0.8
+14,GreenEnemy,7000,2000,21,CenterCircle,0.41,AttackCenterBreakLeft,0.8
+15,GreenEnemy,7250,2000,20,CenterCircle,0.42,AttackCenterBreakRight,0.8
