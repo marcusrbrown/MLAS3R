@@ -3,6 +3,11 @@
 #include "MLAS3R.h"
 #include "Match3Grid.h"
 
+namespace
+{
+	static const FColor DefaultBoundsColor(100, 255, 100, 255);
+	static const FRotator DefaultSpawnRotation(0.0f, 90.0f, 0.0f);
+}
 
 // Sets default values
 AMatch3Grid::AMatch3Grid()
@@ -16,6 +21,15 @@ AMatch3Grid::AMatch3Grid()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
+	// Setup our RootComponent
+	Bounds = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
+	Bounds->ShapeColor = DefaultBoundsColor;
+	Bounds->InitBoxExtent(FVector(40.0f, 40.0f, 40.0f));
+	RootComponent = Bounds;
+
+	// This doesn't collide
+	SetActorEnableCollision(false);
 }
 
 // Called when the game starts or when spawned

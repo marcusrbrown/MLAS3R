@@ -121,6 +121,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Match 3 Tile")
 	FVector2D TileSize;
 
+	UPROPERTY(Category = "Bounds", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UBoxComponent* Bounds;
+
 	AMatch3GridTile* SelectedTile;
 
 private:
