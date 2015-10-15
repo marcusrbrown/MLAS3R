@@ -68,6 +68,7 @@ AMatch3GridTile* AMatch3Grid::CreateTile(UStaticMesh* StaticMesh, FVector SpawnL
 			newTile->GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
 			newTile->GetStaticMeshComponent()->SetStaticMesh(StaticMesh);
 			newTile->TileTypeID = TileTypeID;
+            newTile->Color = TileLibrary[TileTypeID].Color;
 			newTile->Abilities = TileLibrary[TileTypeID].Abilities;
 			newTile->SetGridAddress(SpawnGridAddress);
 			Tiles[SpawnGridAddress] = newTile;
@@ -78,6 +79,14 @@ AMatch3GridTile* AMatch3Grid::CreateTile(UStaticMesh* StaticMesh, FVector SpawnL
 	return nullptr;
 }
 
+void AMatch3Grid::FillTilesFromCapturedActors()
+{
+    if (CapturedActors.Num() == 0)
+    {
+        return;
+    }
+}
+
 void AMatch3Grid::FillTilesFromLibrary()
 {
     for (int32 column = 0; column < GridWidth; ++column)
@@ -86,12 +95,20 @@ void AMatch3Grid::FillTilesFromLibrary()
         {
             int32 gridAddress;
             GetGridAddressWithOffset(0, column, row, gridAddress);
+
+            if (GetTileFromGridAddress(gridAddress) != nullptr)
+            {
+                // There's already a tile assigned to this location.
+                continue;
+            }
+
             FVector spawnLocation = GetLocationFromGridAddress(gridAddress);
 
             int32 tileID;
             for (;;)
             {
                 tileID = SelectTileFromLibrary();
+                EnemyColor tileColor = TileLibrary[tileID].Color;
 
                 // TODO: marcus@HV: Reflow this logic (originally from the Match 3 training video.
 
@@ -107,7 +124,8 @@ void AMatch3Grid::FillTilesFromLibrary()
                             // TODO: marcus@HV: Epic had this in their training code, I don't think it's valid to call this before the GetGridAddressWithOffset() call below.
                             //checkSlow(GetTileFromGridAddress(testAddress));
 
-                            if (!GetGridAddressWithOffset(0, column - (horizontal ? tileOffset : 0), row - (horizontal ? 0 : tileOffset), testAddress) || (GetTileFromGridAddress(testAddress)->TileTypeID != tileID))
+                            if (!GetGridAddressWithOffset(0, column - (horizontal ? tileOffset : 0), row - (horizontal ? 0 : tileOffset), testAddress)
+                                || (GetTileFromGridAddress(testAddress)->Color != tileColor))
                             {
                                 // Not in a matching run, or off the edge of a map, so stop checking this axis.
                                 break;
@@ -171,6 +189,9 @@ void AMatch3Grid::ToggleGrid(bool bEnabled)
 {
     if (bEnabled)
     {
+        Tiles.Empty(GridWidth * GridHeight);
+        Tiles.AddDefaulted(Tiles.Max());
+
         FillTilesFromLibrary();
     }
 
@@ -355,7 +376,7 @@ bool AMatch3Grid::IsMoveLegal(AMatch3GridTile* TileA, AMatch3GridTile* TileB)
 {
 	if (TileA && TileB && (TileA != TileB) && TileA->Abilities.CanSwap() && TileB->Abilities.CanSwap())
 	{
-		if (TileA->TileTypeID != TileB->TileTypeID)
+		if (TileA->Color != TileB->Color)
 		{
 			// Swap the tiles, check for matches, then swap them back to determine whether the move is legal.
 			SwapTiles(TileA, TileB);
@@ -398,7 +419,7 @@ TArray<AMatch3GridTile*> AMatch3Grid::FindNeighbors(AMatch3GridTile* StartingTil
 				{
 					neighborTile = GetTileFromGridAddress(neighborGridAddress);
 
-					if (neighborTile && (!bMustMatchID || (neighborTile->TileTypeID == StartingTile->TileTypeID)))
+					if (neighborTile && (!bMustMatchID || (neighborTile->Color == StartingTile->Color)))
 					{
 						matchInProgress.Add(neighborTile);
 						continue;
@@ -477,8 +498,10 @@ void AMatch3Grid::OnTileWasSelected(AMatch3GridTile* NewSelectedTile)
 	}
 
 	checkSlow(NewSelectedTile);
+#if 0 // TODO: marcus@HV: EMJ last minute hack.
 	checkSlow(TileLibrary.IsValidIndex(NewSelectedTile->TileTypeID));
 	checkSlow(TileLibrary[NewSelectedTile->TileTypeID] != nullptr);
+#endif
 	FTileType& NewSelectedTileType = TileLibrary[NewSelectedTile->TileTypeID];
 
 	if (SelectedTile)

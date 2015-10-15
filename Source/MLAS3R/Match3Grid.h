@@ -48,6 +48,7 @@ public:
 
 	AMatch3GridTile* CreateTile(UStaticMesh* StaticMesh, FVector SpawnLocation, int32 SpawnGridAddress, int TileTypeID);
 
+    void FillTilesFromCapturedActors();
     void FillTilesFromLibrary();
     int32 SelectTileFromLibrary() const;
 

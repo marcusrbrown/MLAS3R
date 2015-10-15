@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "Enemy.h"
 #include "Match3GridTile.generated.h"
 
 class AMatch3Grid;
@@ -85,9 +86,12 @@ public:
 	
 	int32 GetGridAddress() const;
 	void SetGridAddress(int32 NewAddress);
-	
-	UPROPERTY()
-	int32 TileTypeID;
+
+    UPROPERTY()
+    int32 TileTypeID;
+
+    UPROPERTY()
+    EnemyColor Color;
 	
 	UPROPERTY()
 	EMatch3TileState TileState;
