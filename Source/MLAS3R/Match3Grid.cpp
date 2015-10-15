@@ -42,64 +42,6 @@ void AMatch3Grid::BeginPlay()
 
 	Tiles.Empty(GridWidth * GridHeight);
 	Tiles.AddUninitialized(Tiles.Max());
-
-	for (int32 column = 0; column < GridWidth; ++column)
-	{
-		for (int32 row = 0; row < GridHeight; ++row)
-		{
-			int32 gridAddress;
-			GetGridAddressWithOffset(0, column, row, gridAddress);
-			FVector spawnLocation = GetLocationFromGridAddress(gridAddress);
-
-			int32 tileID;
-			for (;;)
-			{
-				tileID = SelectTileFromLibrary();
-
-				// TODO: marcus@HV: Reflow this logic (originally from the Match 3 training video.
-
-				if ((column >= MinimumMatchLength - 1) || (row >= MinimumMatchLength - 1))
-				{
-					int32 testAddress = 0;
-					int32 tileOffset = 0;
-
-					for (int32 horizontal = 0; horizontal < 2; ++horizontal)
-					{
-						for (tileOffset = 1; tileOffset < MinimumMatchLength; ++tileOffset)
-						{
-							// TODO: marcus@HV: Epic had this in their training code, I don't think it's valid to call this before the GetGridAddressWithOffset() call below.
-							//checkSlow(GetTileFromGridAddress(testAddress));
-
-							if (!GetGridAddressWithOffset(0, column - (horizontal ? tileOffset : 0), row - (horizontal ? 0 : tileOffset), testAddress) || (GetTileFromGridAddress(testAddress)->TileTypeID != tileID))
-							{
-								// Not in a matching run, or off the edge of a map, so stop checking this axis.
-								break;
-							}
-						}
-
-						if (tileOffset == MinimumMatchLength)
-						{
-							// We made it through the whole "check for matching run" loop. This tile completes a scoring run. Pick a new tile type and test again.
-							break;
-						}
-					}
-
-					if (tileOffset < MinimumMatchLength)
-					{
-						// We didn't find a matching run in either direction, so we can place a tile at this location.
-						break;
-					}
-				}
-				else
-				{
-					// This tile is too close to the edge to be worth checking.
-					break;
-				}
-			}
-
-			CreateTile(TileLibrary[tileID].TileMesh, spawnLocation, gridAddress, tileID);
-		}
-	}
 }
 
 // Called every frame
@@ -136,6 +78,67 @@ AMatch3GridTile* AMatch3Grid::CreateTile(UStaticMesh* StaticMesh, FVector SpawnL
 	return nullptr;
 }
 
+void AMatch3Grid::FillTilesFromLibrary()
+{
+    for (int32 column = 0; column < GridWidth; ++column)
+    {
+        for (int32 row = 0; row < GridHeight; ++row)
+        {
+            int32 gridAddress;
+            GetGridAddressWithOffset(0, column, row, gridAddress);
+            FVector spawnLocation = GetLocationFromGridAddress(gridAddress);
+
+            int32 tileID;
+            for (;;)
+            {
+                tileID = SelectTileFromLibrary();
+
+                // TODO: marcus@HV: Reflow this logic (originally from the Match 3 training video.
+
+                if ((column >= MinimumMatchLength - 1) || (row >= MinimumMatchLength - 1))
+                {
+                    int32 testAddress = 0;
+                    int32 tileOffset = 0;
+
+                    for (int32 horizontal = 0; horizontal < 2; ++horizontal)
+                    {
+                        for (tileOffset = 1; tileOffset < MinimumMatchLength; ++tileOffset)
+                        {
+                            // TODO: marcus@HV: Epic had this in their training code, I don't think it's valid to call this before the GetGridAddressWithOffset() call below.
+                            //checkSlow(GetTileFromGridAddress(testAddress));
+
+                            if (!GetGridAddressWithOffset(0, column - (horizontal ? tileOffset : 0), row - (horizontal ? 0 : tileOffset), testAddress) || (GetTileFromGridAddress(testAddress)->TileTypeID != tileID))
+                            {
+                                // Not in a matching run, or off the edge of a map, so stop checking this axis.
+                                break;
+                            }
+                        }
+
+                        if (tileOffset == MinimumMatchLength)
+                        {
+                            // We made it through the whole "check for matching run" loop. This tile completes a scoring run. Pick a new tile type and test again.
+                            break;
+                        }
+                    }
+
+                    if (tileOffset < MinimumMatchLength)
+                    {
+                        // We didn't find a matching run in either direction, so we can place a tile at this location.
+                        break;
+                    }
+                }
+                else
+                {
+                    // This tile is too close to the edge to be worth checking.
+                    break;
+                }
+            }
+
+            CreateTile(TileLibrary[tileID].TileMesh, spawnLocation, gridAddress, tileID);
+        }
+    }
+}
+
 int32 AMatch3Grid::SelectTileFromLibrary() const
 {
 	float normalizingFactor = 0.0f;
@@ -157,6 +160,11 @@ int32 AMatch3Grid::SelectTileFromLibrary() const
 	}
 
 	return 0;
+}
+
+void AMatch3Grid::CaptureActors(TArray<AActor*> Actors)
+{
+    CapturedActors = Actors;
 }
 
 AMatch3GridTile* AMatch3Grid::GetTileFromGridAddress(int32 GridAddress) const

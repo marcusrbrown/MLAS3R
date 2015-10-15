@@ -44,7 +44,11 @@ public:
 
 	AMatch3GridTile* CreateTile(UStaticMesh* StaticMesh, FVector SpawnLocation, int32 SpawnGridAddress, int TileTypeID);
 
-	int32 SelectTileFromLibrary() const;
+    void FillTilesFromLibrary();
+    int32 SelectTileFromLibrary() const;
+
+    UFUNCTION(BlueprintCallable, Category = "Match 3 Grid")
+    void CaptureActors(TArray<AActor*> Actors);
 
 	AMatch3GridTile* GetTileFromGridAddress(int32 GridAddress) const;
 
@@ -147,6 +151,8 @@ private:
 
 	/** Tiles that are currently being destroyed (because matches). */
 	TArray<AMatch3GridTile*> TilesBeingDestroyed;
+
+    TArray<AActor*> CapturedActors;
 
 	/** The last move made by a player. */
 	TMap<APlayerController*, EMatch3MoveType> LastMoves;
