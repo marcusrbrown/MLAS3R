@@ -13,7 +13,7 @@ namespace
 }
 
 // Sets default values
-APlayfield::APlayfield() : CurrentLevel(0), CurrentRow(0), PlayTime(0.0f), SpeedMultiplier(1.0f), PlayerIsDead(false)
+APlayfield::APlayfield() : CurrentLevel(0), CurrentRow(0), PlayTime(0.0f), SpeedMultiplier(1.0f), PlayerIsDead(false), WaitingForWaveClear(false)
 {
 	// Set this actor to call Tick() every frame.  You can tu  rn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -56,8 +56,6 @@ void APlayfield::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 	
-	PlayTime += DeltaTime * SpeedMultiplier;
-	
 	// Update the grid pivot
 	{
 		Grid.LerpAlpha += Grid.LerpAlphaDirection * DeltaTime * SpeedMultiplier;
@@ -76,27 +74,50 @@ void APlayfield::Tick( float DeltaTime )
 	// Spawn the enemies and grab their spline
 	if (CurrentLevel < Levels.Num())
 	{
-		// Grab a row, if the row doesn't exist, loop around and increment our speed mulitplier (once all enemies are dead)
-		auto row = ((UDataTable*)Levels[CurrentLevel])->FindRow<FPlayfieldSpawnTableRow>(*FString::FromInt(CurrentRow), TEXT(""), false);
-		if (row == nullptr && Enemies.Num() == 0 && !PlayerIsDead) // TODO: Can Spawn Helper Method
+		if (WaitingForWaveClear && Enemies.Num() == 0)
 		{
-			CurrentRow = 0;
-			SpeedMultiplier += 0.25;
-			PlayTime = -5.0f; // 5 second delay
-			row = ((UDataTable*)Levels[CurrentLevel])->FindRow<FPlayfieldSpawnTableRow>(*FString::FromInt(CurrentRow), TEXT(""), false);
+			WaitingForWaveClear = false;
+			PlayTime = 0.0f;
 		}
 		
-		// Spawn all enemies that should be in existance at this time point
-		while (row != nullptr)
+		if (!WaitingForWaveClear && !PlayerIsDead)
 		{
-			if (PlayTime > (row->StartTime / 1000.0f)) // Seconds
+			PlayTime += DeltaTime * SpeedMultiplier;
+			
+			// Grab a row, if the row doesn't exist, loop around and increment our speed mulitplier (once all enemies are dead)
+			auto row = ((UDataTable*)Levels[CurrentLevel])->FindRow<FPlayfieldSpawnTableRow>(*FString::FromInt(CurrentRow), TEXT(""), false);
+			
+			if (!WaitingForWaveClear)
 			{
-				SpawnEnemyFromTableRow(*row);
-				row = ((UDataTable*)Levels[CurrentLevel])->FindRow<FPlayfieldSpawnTableRow>(*FString::FromInt(++CurrentRow), TEXT(""), false);
-			}
-			else
-			{
-				break;
+				// Restart
+				if (row == nullptr && Enemies.Num() == 0) // TODO: Can Spawn Helper Method
+				{
+					CurrentRow = 0;
+					SpeedMultiplier += 0.25;
+					PlayTime = -5.0f; // 5 second delay
+					row = ((UDataTable*)Levels[CurrentLevel])->FindRow<FPlayfieldSpawnTableRow>(*FString::FromInt(CurrentRow), TEXT(""), false);
+				}
+				
+				// Spawn all enemies that should be in existance at this time point
+				while (row != nullptr)
+				{
+					if (PlayTime > (row->StartTime / 1000.0f)) // Seconds
+					{
+						SpawnEnemyFromTableRow(*row);
+						row = ((UDataTable*)Levels[CurrentLevel])->FindRow<FPlayfieldSpawnTableRow>(*FString::FromInt(++CurrentRow), TEXT(""), false);
+						
+						// Enemy Wave Wait
+						if (row != nullptr && row->EnemyType == FString("Wait"))
+						{
+							WaitingForWaveClear = true;
+							row = ((UDataTable*)Levels[CurrentLevel])->FindRow<FPlayfieldSpawnTableRow>(*FString::FromInt(++CurrentRow), TEXT(""), false);
+						}
+					}
+					else
+					{
+						break;
+					}
+				}
 			}
 		}
 	}
