@@ -134,7 +134,7 @@ void AMatch3GridTile::StartFalling(bool bUseCurrentWorldLocation)
 			break;
 		}
 
-		fallDistance = Grid->TileSize.Y * yOffset;
+        fallDistance = Grid->TileSize.Y * yOffset + (Grid->GridPadding.Y * yOffset);
 		FallingEndLocation = FallingStartLocation;
 		FallingEndLocation.Y -= -fallDistance;
 	}
