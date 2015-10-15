@@ -176,6 +176,7 @@ void APlayfield::Tick( float DeltaTime )
 				if (splinePosition > length) {
 					enemyState.State = EPlayfieldEnemyState::ToFormation;
 					enemyState.LerpAlpha = 0.0f;
+                    enemyState.LerpStart = enemyState.Enemy->GetActorLocation();
 					//enemyState.Enemy->Destroy();
 					//doneEnemies.Push(Iter.GetIndex());
 				}
@@ -183,15 +184,18 @@ void APlayfield::Tick( float DeltaTime )
 				
 			case EPlayfieldEnemyState::ToFormation:
 			{
-				enemyState.LerpAlpha += DeltaTime;
-				float alpha = enemyState.LerpAlpha / enemyState.LerpDuration;
-				FMath::Clamp(alpha, 0.0f, 1.0f);
+                FVector target = GetGridLocationFromAddress(enemyState.GridAddress);
+                float length = (target - enemyState.LerpStart).Size();
+
+                float distance = enemyState.Speed * enemyState.LerpAlpha;
+                distance = FMath::Clamp(distance, 0.0f, length);
+                float alpha = distance / length;
 				
-				FVector target = GetGridLocationFromAddress(enemyState.GridAddress);
-				target = FMath::Lerp(enemyState.Enemy->GetActorLocation(), target, alpha);
+                target = FMath::Lerp(enemyState.LerpStart, target, alpha);
 				enemyState.Enemy->SetActorLocation(target);
+                enemyState.LerpAlpha += DeltaTime;
 				
-				if (enemyState.LerpAlpha >= 1.0f)
+                if (alpha >= 1.0f)
 				{
 					enemyState.State = EPlayfieldEnemyState::Formation;
 					enemyState.AttackAlpha = 0.0f;
@@ -212,6 +216,7 @@ void APlayfield::Tick( float DeltaTime )
 						{
 							enemyState.State = EPlayfieldEnemyState::ToAttack;
 							enemyState.LerpAlpha = 0.0f;
+                            enemyState.LerpStart = enemyState.Enemy->GetActorLocation();
 						}
 					}
 				}
@@ -219,15 +224,18 @@ void APlayfield::Tick( float DeltaTime )
 				
 			case EPlayfieldEnemyState::ToAttack:
 			{
-				enemyState.LerpAlpha += DeltaTime;
-				float alpha = enemyState.LerpAlpha / enemyState.LerpDuration;
-				FMath::Clamp(alpha, 0.0f, 1.0f);
+                FVector target = enemyState.AttackSpline->GetLocationAtDistanceAlongSpline(0.0f, ESplineCoordinateSpace::World);
+                float length = (target - enemyState.LerpStart).Size();
+
+                float distance = enemyState.Speed * enemyState.LerpAlpha;
+                distance = FMath::Clamp(distance, 0.0f, length);
+                float alpha = distance / length;
+
+                target = FMath::Lerp(enemyState.LerpStart, target, alpha);
+                enemyState.Enemy->SetActorLocation(target);
+                enemyState.LerpAlpha += DeltaTime;
 				
-				FVector target = enemyState.AttackSpline->GetLocationAtDistanceAlongSpline(0.0f, ESplineCoordinateSpace::World);
-				target = FMath::Lerp(enemyState.Enemy->GetActorLocation(), target, alpha);
-				enemyState.Enemy->SetActorLocation(target);
-				
-				if (enemyState.LerpAlpha >= 1.0f)
+                if (alpha >= 1.0f)
 				{
 					enemyState.State = EPlayfieldEnemyState::Attack;
 					enemyState.DeltaTime = 0.0f;
@@ -269,9 +277,6 @@ void APlayfield::Tick( float DeltaTime )
 				// Move the enemies to the grid
 				if (splinePosition > length) {
 					enemyState.State = EPlayfieldEnemyState::BackToFormation;
-					enemyState.LerpAlpha = 0.0f;
-					//enemyState.Enemy->Destroy();
-					//doneEnemies.Push(Iter.GetIndex());
 				}
 			} break;
 				
@@ -284,6 +289,7 @@ void APlayfield::Tick( float DeltaTime )
 				
 				enemyState.State = EPlayfieldEnemyState::ToFormation;
 				enemyState.LerpAlpha = 0.0f;
+                enemyState.LerpStart = enemyState.Enemy->GetActorLocation();
 			} break;
 		}
 		
