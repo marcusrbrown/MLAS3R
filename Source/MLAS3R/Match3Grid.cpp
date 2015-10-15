@@ -34,6 +34,8 @@ void AMatch3Grid::BeginPlay()
 {
 	Super::BeginPlay();
 
+    return;
+
 	// Position the grid.
 	GridOffset += GetActorLocation() - Bounds->GetScaledBoxExtent();
 	float gridExtentX = TileSize.X * GridWidth + (GridPadding.X * GridWidth);
