@@ -111,6 +111,7 @@ void APlayfield::Tick( float DeltaTime )
 						{
 							WaitingForWaveClear = true;
 							row = ((UDataTable*)Levels[CurrentLevel])->FindRow<FPlayfieldSpawnTableRow>(*FString::FromInt(++CurrentRow), TEXT(""), false);
+							break;
 						}
 					}
 					else
