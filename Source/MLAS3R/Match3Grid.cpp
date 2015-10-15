@@ -169,6 +169,24 @@ void AMatch3Grid::CaptureActors(TArray<AActor*> Actors)
 
 void AMatch3Grid::ToggleGrid(bool bEnabled)
 {
+    if (bEnabled)
+    {
+        FillTilesFromLibrary();
+    }
+
+    for (auto tile : Tiles)
+    {
+        if (IsValid(tile))
+        {
+            tile->SetActorHiddenInGame(!bEnabled);
+
+            if (!bEnabled)
+            {
+                Tiles[tile->GetGridAddress()] = nullptr;
+                GetWorld()->DestroyActor(tile);
+            }
+        }
+    }
 }
 
 AMatch3GridTile* AMatch3Grid::GetTileFromGridAddress(int32 GridAddress) const
