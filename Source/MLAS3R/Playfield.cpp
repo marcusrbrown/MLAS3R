@@ -365,6 +365,16 @@ AActor* APlayfield::SpawnGreenEnemy()
 	return world->SpawnActor(GreenEnemy, &DefaultSpawnLocation, &DefaultSpawnRotation, spawnParams);
 }
 
+AActor* APlayfield::SpawnYellowEnemy()
+{
+    UWorld* world = GetWorld();
+    if (!world) return nullptr;
+
+    FActorSpawnParameters spawnParams;
+    spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+    return world->SpawnActor(YellowEnemy, &DefaultSpawnLocation, &DefaultSpawnRotation, spawnParams);
+}
+
 AActor* APlayfield::SpawnEnemyFromTableRow(const FPlayfieldSpawnTableRow& row)
 {
 	auto introSpline = FindSplineByName(row.IntroSpline);
@@ -404,6 +414,10 @@ AActor* APlayfield::SpawnEnemyFromTableRow(const FPlayfieldSpawnTableRow& row)
 	{
 		enemy.Enemy = SpawnGreenEnemy();
 	}
+    else if (enemy.Type == FString("YellowEnemy"))
+    {
+        enemy.Enemy = SpawnYellowEnemy();
+    }
 	
 	// Add the enemy to our active tick list
 	Enemies.Push(enemy);
@@ -432,6 +446,10 @@ AActor* APlayfield::SpawnEnemyBulletAtLocation(const FString& type, const FVecto
 	{
 		return world->SpawnActor(GreenBullet, &location, &DefaultSpawnRotation, spawnParams);
 	}
+    else if (type == FString("YellowEnemy"))
+    {
+        return world->SpawnActor(YellowBullet, &location, &DefaultSpawnRotation, spawnParams);
+    }
 	
 	return nullptr;
 }

@@ -130,6 +130,9 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy Types")
 	TSubclassOf<AActor> GreenEnemy;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy Types")
+    TSubclassOf<AActor> YellowEnemy;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet Types")
 	TSubclassOf<AActor> RedBullet;
@@ -139,6 +142,9 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet Types")
 	TSubclassOf<AActor> GreenBullet;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet Types")
+    TSubclassOf<AActor> YellowBullet;
 	
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	AActor* SpawnRedEnemy();
@@ -148,6 +154,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	AActor* SpawnGreenEnemy();
+
+    UFUNCTION(BlueprintCallable, Category = "Spawn")
+    AActor* SpawnYellowEnemy();
 	
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	AActor* SpawnEnemyFromTableRow(const FPlayfieldSpawnTableRow& row);
