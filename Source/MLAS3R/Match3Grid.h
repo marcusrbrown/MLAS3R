@@ -87,7 +87,7 @@ public:
 	bool IsUnwinnable() const;
 
 	/** Gets the last move made. */
-	EMatch3MoveType GetLastMove() const;
+	EMatch3MoveType GetLastMove();
 
 	/** Establishes the most recent move type. */
 	void SetLastMove(EMatch3MoveType MoveType);

@@ -2,6 +2,7 @@
 
 #include "MLAS3R.h"
 #include "Match3Grid.h"
+#include "MLAS3RPlayerController.h"
 
 namespace
 {
@@ -476,14 +477,30 @@ bool AMatch3Grid::IsUnwinnable() const
 	return false;
 }
 
-EMatch3MoveType AMatch3Grid::GetLastMove() const
+EMatch3MoveType AMatch3Grid::GetLastMove()
 {
-	return EMatch3MoveType::None;
+    // TODO: marcus@HV: Move the logic to get the custom player controller into a shared location.
+    auto pc = UGameplayStatics::GetPlayerController(this, 0);
+    auto ourPc = Cast<AMLAS3RPlayerController>(pc);
+
+    if (ourPc != nullptr)
+    {
+        return ourPc->LastMove;
+    }
+
+    return EMatch3MoveType::None;
 }
 
 void AMatch3Grid::SetLastMove(EMatch3MoveType MoveType)
 {
+    // TODO: marcus@HV: Move the logic to get the custom player controller into a shared location.
+    auto pc = UGameplayStatics::GetPlayerController(this, 0);
+    auto ourPc = Cast<AMLAS3RPlayerController>(pc);
 
+    if (ourPc != nullptr)
+    {
+        ourPc->LastMove = MoveType;
+    }
 }
 
 int32 AMatch3Grid::GetScoreMultiplier_Implementation(EMatch3MoveType MoveType)
