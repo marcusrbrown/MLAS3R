@@ -48,17 +48,17 @@ public:
 
 	AMatch3GridTile* GetTileFromGridAddress(int32 GridAddress) const;
 
-	UFUNCTION(BlueprintImplementableEvent, meta = (ExpandEnumAsExecs = "MoveType"), Category = "Match 3 Tile")
+	UFUNCTION(BlueprintImplementableEvent, meta = (ExpandEnumAsExecs = "MoveType"), Category = "Match 3 Grid")
 	void OnMoveMade(EMatch3MoveType MoveType);
 
 	/** Get the world location from any grid address. */
-	UFUNCTION(BlueprintCallable, Category = "Match 3 Tile")
+	UFUNCTION(BlueprintCallable, Category = "Match 3 Grid")
 	FVector GetLocationFromGridAddress(int32 GridAddress);
 
 	FVector GetLocationFromGridAddress(int32 GridAddress, int32 XOffsetInTiles, int32 YOffsetInTiles);
 
 	/** Get a grid address relative to another grid address. */
-	UFUNCTION(BlueprintCallable, Category = "Match 3 Tile")
+	UFUNCTION(BlueprintCallable, Category = "Match 3 Grid")
 	bool GetGridAddressWithOffset(int32 GridAddress, int32 XOffset, int32 YOffset, int32& RelativeGridAddress) const;
 
 	bool AreAddressesNeighbors(int32 GridAddressA, int32 GridAddressB) const;
@@ -102,16 +102,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FTileType> TileLibrary;
 
-	UPROPERTY(EditAnywhere, Category = "Match 3 Tile")
+	UPROPERTY(EditAnywhere, Category = "Match 3 Grid")
 	TSubclassOf<class AMatch3GridTile> TileToSpawn;
 
 	/** The width of the grid. Used to calculate tile positions. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Match 3 Tile")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Match 3 Grid")
 	int32 GridWidth;
 
 	/** The height of the grid. Used to calculate tile positions. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Match 3 Tile")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Match 3 Grid")
 	int32 GridHeight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Match 3 Grid")
+	FVector GridOffset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Match 3 Grid")
+	FVector GridPadding;
 
 	/** The minimum number of tiles required to make a match. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Match 3 Tile")
@@ -121,12 +127,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Match 3 Tile")
 	FVector2D TileSize;
 
-	UPROPERTY(Category = "Bounds", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UBoxComponent* Bounds;
-
 	AMatch3GridTile* SelectedTile;
 
 private:
+	UPROPERTY(Category = "Bounds", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UBoxComponent* Bounds;
+
 	/** Array of tiles found in the most recent call to IsMoveLegal(). */
 	TArray<AMatch3GridTile*> LastLegalMatch;
 

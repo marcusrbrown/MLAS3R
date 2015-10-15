@@ -34,6 +34,11 @@ void AMatch3Grid::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Position the grid.
+	GridOffset += GetActorLocation() - Bounds->GetScaledBoxExtent();
+	float gridExtentX = TileSize.X * GridWidth + (GridPadding.X * GridWidth);
+	GridOffset.X += ((Bounds->GetScaledBoxExtent().X * 2.0f) - gridExtentX) * 0.5f;
+
 	Tiles.Empty(GridWidth * GridHeight);
 	Tiles.AddUninitialized(Tiles.Max());
 
@@ -186,8 +191,8 @@ FVector AMatch3Grid::GetLocationFromGridAddress(int32 GridAddress, int32 XOffset
 
 	int32 column = GridAddress % GridWidth;
 	int32 row = GridAddress / GridWidth;
-	float x = GetActorLocation().X + (column * TileSize.X);
-	float y = GetActorLocation().Y + (row * TileSize.Y);
+	float x = GridOffset.X + (column * TileSize.X + (GridPadding.X * column));
+	float y = GridOffset.Y + (row * TileSize.Y + (GridPadding.Y * row));
 
 	x += TileSize.X * 0.5f;
 	y += TileSize.Y * 0.5f;
