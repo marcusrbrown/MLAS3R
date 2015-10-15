@@ -497,6 +497,37 @@ void APlayfield::ToggleGrid(bool bEnabled)
     }
 }
 
+void APlayfield::ResetState()
+{
+    CurrentLevel = 0;
+
+    CurrentRow = 0;
+
+    PlayTime = 0.0f;
+
+    SpeedMultiplier = 1.0f;
+
+    PlayerIsDead = false;
+
+    Grid.LerpAlpha = 0.5f;
+    Grid.LerpAlphaDirection = 1.0f;
+    Grid.LerpDuration = 5.0f;
+
+    WaitingForWaveClear = false;
+
+    Attacking = false;
+
+    for (auto enemyState : Enemies)
+    {
+        if (IsValid(enemyState.Enemy))
+        {
+            enemyState.Enemy->Destroy();
+        }
+    }
+
+    Enemies.Reset();
+}
+
 USplineComponent* APlayfield::FindSplineByName(FString name)
 {
 	for (TActorIterator<ASplineActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
