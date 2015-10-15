@@ -149,7 +149,7 @@ void AMatch3GridTile::StartFalling(bool bUseCurrentWorldLocation)
 
 void AMatch3GridTile::FinishFalling()
 {
-	
+    GetWorldTimerManager().ClearTimer(TickFallingHandle);
 }
 
 void AMatch3GridTile::TickFalling()

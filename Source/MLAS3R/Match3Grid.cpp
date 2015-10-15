@@ -251,7 +251,8 @@ void AMatch3Grid::OnTileFallingFinished(AMatch3GridTile* Tile, int32 LandingGrid
 
 void AMatch3Grid::OnTileMatchingFinished(AMatch3GridTile* Tile)
 {
-
+    // Remove the tile.
+    GetWorld()->DestroyActor(Tile);
 }
 
 void AMatch3Grid::OnSwapDisplayFinished(AMatch3GridTile* Tile)
@@ -380,7 +381,11 @@ TArray<AMatch3GridTile*> AMatch3Grid::FindTilesOfType(int32 TileTypeID) const
 
 void AMatch3Grid::ExecuteMatch(TArray<AMatch3GridTile*> MatchingTiles)
 {
-
+    for (auto tile : MatchingTiles)
+    {
+        tile->TileState = EMatch3TileState::Removed;
+        tile->OnMatched(GetLastMove());
+    }
 }
 
 void AMatch3Grid::OnTileWasSelected(AMatch3GridTile* NewSelectedTile)
