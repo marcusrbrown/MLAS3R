@@ -172,6 +172,9 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "Gameplay")
     void ToggleGrid(bool bEnabled);
+
+    UFUNCTION(BlueprintCallable, Category = "Gameplay")
+    void ResetState();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Levels")
 	TArray<UDataTable*> Levels;
