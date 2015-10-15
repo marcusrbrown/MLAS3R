@@ -383,7 +383,34 @@ void AMatch3Grid::ExecuteMatch(TArray<AMatch3GridTile*> MatchingTiles)
 {
     for (auto tile : MatchingTiles)
     {
+        // TODO: marcus@HV: Handle scoring here.
+
         tile->TileState = EMatch3TileState::Removed;
+    }
+
+    for (auto tile : MatchingTiles)
+    {
+        // Set all tiles above this tile to fall, unless they were removed or already falling.
+        for (int32 yOffset = 1; yOffset < GridHeight; ++yOffset)
+        {
+            int32 aboveGridAddress;
+            if (GetGridAddressWithOffset(tile->GetGridAddress(), 0, -yOffset, aboveGridAddress))
+            {
+                if (auto tileAbove = GetTileFromGridAddress(aboveGridAddress))
+                {
+                    if ((tileAbove->TileState != EMatch3TileState::Removed)
+                        && (tileAbove->TileState != EMatch3TileState::Falling))
+                    {
+                        tileAbove->StartFalling();
+                    }
+                }
+            }
+            else
+            {
+
+            }
+        }
+
         tile->OnMatched(GetLastMove());
     }
 }

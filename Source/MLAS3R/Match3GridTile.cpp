@@ -105,7 +105,7 @@ void AMatch3GridTile::StartFalling(bool bUseCurrentWorldLocation)
 		{
 			++yOffset;
 
-			if (Grid->GetGridAddressWithOffset(GetGridAddress(), 0, -yOffset, LandingGridAddress))
+			if (Grid->GetGridAddressWithOffset(GetGridAddress(), 0, yOffset, LandingGridAddress))
 			{
 				if (auto TileBelow = Grid->GetTileFromGridAddress(LandingGridAddress))
 				{
@@ -130,13 +130,13 @@ void AMatch3GridTile::StartFalling(bool bUseCurrentWorldLocation)
 
 			// This space is off the grid or contains a tile that is staying. Go back a space and start falling.
 			yOffset -= heightAboveBottom;
-			Grid->GetGridAddressWithOffset(GetGridAddress(), 0, -yOffset, LandingGridAddress);
+			Grid->GetGridAddressWithOffset(GetGridAddress(), 0, yOffset, LandingGridAddress);
 			break;
 		}
 
 		fallDistance = Grid->TileSize.Y * yOffset;
 		FallingEndLocation = FallingStartLocation;
-		FallingEndLocation.Z -= fallDistance;
+		FallingEndLocation.Y -= -fallDistance;
 	}
 	else
 	{
@@ -144,17 +144,25 @@ void AMatch3GridTile::StartFalling(bool bUseCurrentWorldLocation)
 		LandingGridAddress = GetGridAddress();
 	}
 
-	// TODO: Complete!
+    TileState = EMatch3TileState::Falling;
 }
 
 void AMatch3GridTile::FinishFalling()
 {
     GetWorldTimerManager().ClearTimer(TickFallingHandle);
+
+    TileState = EMatch3TileState::Inactive;
+
+    if (Grid)
+    {
+        Grid->OnTileFallingFinished(this, LandingGridAddress);
+    }
 }
 
 void AMatch3GridTile::TickFalling()
 {
-
+    SetActorLocation(FallingEndLocation);
+    FinishFalling();
 }
 
 int32 AMatch3GridTile::GetGridAddress() const
