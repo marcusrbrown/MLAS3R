@@ -158,7 +158,6 @@ void APlayfield::Tick( float DeltaTime )
 					float t = enemyState.IntroBullets[enemyState.IntroBulletIndex];
 					if (bulletTime >= t)
 					{
-						UE_LOG(LogTemp, Log, TEXT("SPAWNING BULLET %d @ %f"), enemyState.IntroBulletIndex, t);
 						auto bulletLocation = enemyState.IntroSpline->GetLocationAtDistanceAlongSpline(t * length, ESplineCoordinateSpace::World);
 						enemyState.IntroBulletIndex++;
 						SpawnEnemyBulletAtLocation(enemyState.Type, bulletLocation);
