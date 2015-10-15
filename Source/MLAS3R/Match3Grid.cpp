@@ -3,7 +3,6 @@
 #include "MLAS3R.h"
 #include "Match3Grid.h"
 #include "MLAS3RPlayerController.h"
-#include "Enemy.h"
 
 namespace
 {
@@ -51,7 +50,7 @@ void AMatch3Grid::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 }
 
-AMatch3GridTile* AMatch3Grid::CreateTile(UStaticMesh* StaticMesh, FVector SpawnLocation, int32 SpawnGridAddress, int TileTypeID, EnemyColor color)
+AMatch3GridTile* AMatch3Grid::CreateTile(UStaticMesh* StaticMesh, FVector SpawnLocation, int32 SpawnGridAddress, int TileTypeID)
 {
 	if (TileToSpawn)
 	{
@@ -69,11 +68,8 @@ AMatch3GridTile* AMatch3Grid::CreateTile(UStaticMesh* StaticMesh, FVector SpawnL
 			newTile->GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
 			newTile->GetStaticMeshComponent()->SetStaticMesh(StaticMesh);
 			newTile->TileTypeID = TileTypeID;
-            newTile->Color = color;
-            if (TileTypeID >= 0)
-            {
-                newTile->Abilities = TileLibrary[TileTypeID].Abilities;
-            }
+            newTile->Color = TileLibrary[TileTypeID].Color;
+			newTile->Abilities = TileLibrary[TileTypeID].Abilities;
 			newTile->SetGridAddress(SpawnGridAddress);
 			Tiles[SpawnGridAddress] = newTile;
 			return newTile;
@@ -85,92 +81,10 @@ AMatch3GridTile* AMatch3Grid::CreateTile(UStaticMesh* StaticMesh, FVector SpawnL
 
 void AMatch3Grid::FillTilesFromCapturedActors()
 {
-    TArray<AActor*> recapturedActors;
-
-    for (int32 column = 0; column < GridWidth; ++column)
+    if (CapturedActors.Num() == 0)
     {
-        for (int32 row = 0; row < GridHeight; ++row)
-        {
-            int32 gridAddress;
-            GetGridAddressWithOffset(0, column, row, gridAddress);
-
-            if (GetTileFromGridAddress(gridAddress) != nullptr)
-            {
-                // There's already a tile assigned to this location.
-                continue;
-            }
-
-            FVector spawnLocation = GetLocationFromGridAddress(gridAddress);
-
-            EnemyColor tileColor;
-            AEnemy* enemy = nullptr;
-            for (;;)
-            {
-                if (CapturedActors.Num() == 0)
-                {
-                    CapturedActors.Append(recapturedActors);
-                    return;
-                }
-
-                enemy = Cast<AEnemy>(CapturedActors[0]);
-                if (!enemy)
-                {
-                    CapturedActors.RemoveAt(0);
-                    continue;
-                }
-
-                tileColor = enemy->Color;
-
-                // TODO: marcus@HV: Reflow this logic (originally from the Match 3 training video.
-
-                if ((column >= MinimumMatchLength - 1) || (row >= MinimumMatchLength - 1))
-                {
-                    int32 testAddress = 0;
-                    int32 tileOffset = 0;
-
-                    for (int32 horizontal = 0; horizontal < 2; ++horizontal)
-                    {
-                        for (tileOffset = 1; tileOffset < MinimumMatchLength; ++tileOffset)
-                        {
-                            // TODO: marcus@HV: Epic had this in their training code, I don't think it's valid to call this before the GetGridAddressWithOffset() call below.
-                            //checkSlow(GetTileFromGridAddress(testAddress));
-
-                            if (!GetGridAddressWithOffset(0, column - (horizontal ? tileOffset : 0), row - (horizontal ? 0 : tileOffset), testAddress)
-                                || (GetTileFromGridAddress(testAddress)->Color != tileColor))
-                            {
-                                // Not in a matching run, or off the edge of a map, so stop checking this axis.
-                                break;
-                            }
-                        }
-
-                        if (tileOffset == MinimumMatchLength)
-                        {
-                            // We made it through the whole "check for matching run" loop. This tile completes a scoring run. Pick a new tile type and test again.
-                            recapturedActors.Add(enemy);
-                            CapturedActors.RemoveAt(0);
-                            break;
-                        }
-                    }
-
-                    if (tileOffset < MinimumMatchLength)
-                    {
-                        // We didn't find a matching run in either direction, so we can place a tile at this location.
-                        break;
-                    }
-                }
-                else
-                {
-                    // This tile is too close to the edge to be worth checking.
-                    break;
-                }
-            }
-
-            CapturedActors.RemoveAt(0);
-            CreateTile(enemy->GetStaticMeshComponent()->StaticMesh, spawnLocation, gridAddress, -1, tileColor);
-        }
+        return;
     }
-
-    CapturedActors.Append(recapturedActors);
 }
 
 void AMatch3Grid::FillTilesFromLibrary()
@@ -191,11 +105,10 @@ void AMatch3Grid::FillTilesFromLibrary()
             FVector spawnLocation = GetLocationFromGridAddress(gridAddress);
 
             int32 tileID;
-            EnemyColor tileColor;
             for (;;)
             {
                 tileID = SelectTileFromLibrary();
-                tileColor = TileLibrary[tileID].Color;
+                EnemyColor tileColor = TileLibrary[tileID].Color;
 
                 // TODO: marcus@HV: Reflow this logic (originally from the Match 3 training video.
 
@@ -239,7 +152,7 @@ void AMatch3Grid::FillTilesFromLibrary()
                 }
             }
 
-            CreateTile(TileLibrary[tileID].TileMesh, spawnLocation, gridAddress, tileID, tileColor);
+            CreateTile(TileLibrary[tileID].TileMesh, spawnLocation, gridAddress, tileID);
         }
     }
 }
@@ -279,7 +192,6 @@ void AMatch3Grid::ToggleGrid(bool bEnabled)
         Tiles.Empty(GridWidth * GridHeight);
         Tiles.AddDefaulted(Tiles.Max());
 
-        FillTilesFromCapturedActors();
         FillTilesFromLibrary();
     }
 
@@ -590,7 +502,7 @@ void AMatch3Grid::OnTileWasSelected(AMatch3GridTile* NewSelectedTile)
 	checkSlow(TileLibrary.IsValidIndex(NewSelectedTile->TileTypeID));
 	checkSlow(TileLibrary[NewSelectedTile->TileTypeID] != nullptr);
 #endif
-    FTileType& NewSelectedTileType = TileLibrary[NewSelectedTile->TileTypeID >= 0 ? NewSelectedTile->TileTypeID : 0];
+	FTileType& NewSelectedTileType = TileLibrary[NewSelectedTile->TileTypeID];
 
 	if (SelectedTile)
 	{
