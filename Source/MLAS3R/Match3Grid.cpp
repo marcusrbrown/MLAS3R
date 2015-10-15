@@ -167,6 +167,10 @@ void AMatch3Grid::CaptureActors(TArray<AActor*> Actors)
     CapturedActors = Actors;
 }
 
+void AMatch3Grid::ToggleGrid(bool bEnabled)
+{
+}
+
 AMatch3GridTile* AMatch3Grid::GetTileFromGridAddress(int32 GridAddress) const
 {
 	checkSlow(GridWidth > 0);

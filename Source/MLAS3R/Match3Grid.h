@@ -47,8 +47,13 @@ public:
     void FillTilesFromLibrary();
     int32 SelectTileFromLibrary() const;
 
+    /** Capture the actors that will be used to fill in the Match 3 grid. */
     UFUNCTION(BlueprintCallable, Category = "Match 3 Grid")
     void CaptureActors(TArray<AActor*> Actors);
+
+    /** Toggle the grid. When enabled, all contained tiles are visible and ticking. */
+    UFUNCTION(BlueprintCallable, Category = "Match 3 Grid")
+    void ToggleGrid(bool bEnabled);
 
 	AMatch3GridTile* GetTileFromGridAddress(int32 GridAddress) const;
 
