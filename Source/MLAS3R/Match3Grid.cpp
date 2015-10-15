@@ -41,7 +41,7 @@ void AMatch3Grid::BeginPlay()
 	GridOffset.X += ((Bounds->GetScaledBoxExtent().X * 2.0f) - gridExtentX) * 0.5f;
 
 	Tiles.Empty(GridWidth * GridHeight);
-	Tiles.AddUninitialized(Tiles.Max());
+	Tiles.AddDefaulted(Tiles.Max());
 }
 
 // Called every frame
