@@ -4,6 +4,7 @@
 #include "Playfield.h"
 #include "TableRows.h"
 #include "SplineActor.h"
+#include "Enemy.h"
 
 namespace
 {
@@ -347,7 +348,12 @@ AActor* APlayfield::SpawnRedEnemy()
 	
 	FActorSpawnParameters spawnParams;
 	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	return world->SpawnActor(RedEnemy, &DefaultSpawnLocation, &DefaultSpawnRotation, spawnParams);
+    auto actor = Cast<AEnemy>(world->SpawnActor(RedEnemy, &DefaultSpawnLocation, &DefaultSpawnRotation, spawnParams));
+    if (actor != nullptr)
+    {
+        actor->Color = EnemyColor::Red;
+    }
+    return actor;
 }
 
 AActor* APlayfield::SpawnBlueEnemy()
@@ -357,7 +363,12 @@ AActor* APlayfield::SpawnBlueEnemy()
 	
 	FActorSpawnParameters spawnParams;
 	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	return world->SpawnActor(BlueEnemy, &DefaultSpawnLocation, &DefaultSpawnRotation, spawnParams);
+    auto actor = Cast<AEnemy>(world->SpawnActor(BlueEnemy, &DefaultSpawnLocation, &DefaultSpawnRotation, spawnParams));
+    if (actor != nullptr)
+    {
+        actor->Color = EnemyColor::Blue;
+    }
+    return actor;
 }
 
 AActor* APlayfield::SpawnGreenEnemy()
@@ -367,7 +378,12 @@ AActor* APlayfield::SpawnGreenEnemy()
 	
 	FActorSpawnParameters spawnParams;
 	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	return world->SpawnActor(GreenEnemy, &DefaultSpawnLocation, &DefaultSpawnRotation, spawnParams);
+    auto actor = Cast<AEnemy>(world->SpawnActor(GreenEnemy, &DefaultSpawnLocation, &DefaultSpawnRotation, spawnParams));
+    if (actor != nullptr)
+    {
+        actor->Color = EnemyColor::Green;
+    }
+    return actor;
 }
 
 AActor* APlayfield::SpawnYellowEnemy()
@@ -377,7 +393,12 @@ AActor* APlayfield::SpawnYellowEnemy()
 
     FActorSpawnParameters spawnParams;
     spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-    return world->SpawnActor(YellowEnemy, &DefaultSpawnLocation, &DefaultSpawnRotation, spawnParams);
+    auto actor = Cast<AEnemy>(world->SpawnActor(YellowEnemy, &DefaultSpawnLocation, &DefaultSpawnRotation, spawnParams));
+    if (actor != nullptr)
+    {
+        actor->Color = EnemyColor::Yellow;
+    }
+    return actor;
 }
 
 AActor* APlayfield::SpawnEnemyFromTableRow(const FPlayfieldSpawnTableRow& row)

@@ -5,6 +5,15 @@
 #include "Engine/StaticMeshActor.h"
 #include "Enemy.generated.h"
 
+UENUM()
+enum class EnemyColor : uint8
+{
+    Red,
+    Green,
+    Blue,
+    Yellow,
+};
+
 /**
  *
  */
@@ -15,4 +24,7 @@ class MLAS3R_API AEnemy : public AStaticMeshActor
 		
 public:
 	AEnemy();
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    EnemyColor Color;
 };
