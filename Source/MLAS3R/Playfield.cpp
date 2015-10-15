@@ -13,7 +13,7 @@ namespace
 }
 
 // Sets default values
-APlayfield::APlayfield() : CurrentLevel(0), CurrentRow(0), PlayTime(0.0f), SpeedMultiplier(1.0f), PlayerIsDead(false), WaitingForWaveClear(false)
+APlayfield::APlayfield() : CurrentLevel(0), CurrentRow(0), PlayTime(0.0f), SpeedMultiplier(1.0f), PlayerIsDead(false), WaitingForWaveClear(false), Attacking(false)
 {
 	// Set this actor to call Tick() every frame.  You can tu  rn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -76,6 +76,7 @@ void APlayfield::Tick( float DeltaTime )
 	{
 		if (WaitingForWaveClear && Enemies.Num() == 0)
 		{
+			Attacking = false;
 			WaitingForWaveClear = false;
 			PlayTime = 0.0f;
 		}
@@ -124,6 +125,7 @@ void APlayfield::Tick( float DeltaTime )
 	}
 	
 	// Update our enemies
+	bool readyForAttack = true;
 	TArray<int32> doneEnemies;
 	for (auto Iter(Enemies.CreateIterator()); Iter; Iter++)
 	{
@@ -192,6 +194,7 @@ void APlayfield::Tick( float DeltaTime )
 				if (enemyState.LerpAlpha >= 1.0f)
 				{
 					enemyState.State = EPlayfieldEnemyState::Formation;
+					enemyState.AttackAlpha = 0.0f;
 				}
 			} break;
 				
@@ -199,17 +202,96 @@ void APlayfield::Tick( float DeltaTime )
 			{
 				FVector target = GetGridLocationFromAddress(enemyState.GridAddress);
 				enemyState.Enemy->SetActorLocation(target);
+				
+				if (Attacking)
+				{
+					enemyState.AttackAlpha += DeltaTime * SpeedMultiplier;
+					if (enemyState.AttackAlpha >= enemyState.AttackTime)
+					{
+						if (enemyState.AttackSpline != nullptr)
+						{
+							enemyState.State = EPlayfieldEnemyState::ToAttack;
+							enemyState.LerpAlpha = 0.0f;
+						}
+					}
+				}
 			} break;
 				
 			case EPlayfieldEnemyState::ToAttack:
 			{
+				enemyState.LerpAlpha += DeltaTime;
+				float alpha = enemyState.LerpAlpha / enemyState.LerpDuration;
+				FMath::Clamp(alpha, 0.0f, 1.0f);
 				
+				FVector target = enemyState.AttackSpline->GetLocationAtDistanceAlongSpline(0.0f, ESplineCoordinateSpace::World);
+				target = FMath::Lerp(enemyState.Enemy->GetActorLocation(), target, alpha);
+				enemyState.Enemy->SetActorLocation(target);
+				
+				if (enemyState.LerpAlpha >= 1.0f)
+				{
+					enemyState.State = EPlayfieldEnemyState::Attack;
+					enemyState.DeltaTime = 0.0f;
+					enemyState.AttackBulletIndex = 0;
+				}
 			} break;
 				
 			case EPlayfieldEnemyState::Attack:
 			{
+				// Calculate spline t value
+				float length = enemyState.AttackSpline->GetSplineLength();
+				float splinePosition = enemyState.Speed * enemyState.DeltaTime;
+				float clampedPosition = FMath::Clamp(splinePosition, 0.0f, length);
+				float bulletTime = clampedPosition / length;
 				
+				// Update the enemy on the spline
+				auto location = enemyState.AttackSpline->GetLocationAtDistanceAlongSpline(clampedPosition, ESplineCoordinateSpace::World);
+				enemyState.Enemy->SetActorLocation(location);
+				
+				// Check to see if we need to fire
+				while (enemyState.AttackBulletIndex < enemyState.AttackBullets.Num())
+				{
+					float t = enemyState.AttackBullets[enemyState.AttackBulletIndex];
+					if (bulletTime >= t)
+					{
+						auto bulletLocation = enemyState.AttackSpline->GetLocationAtDistanceAlongSpline(t * length, ESplineCoordinateSpace::World);
+						enemyState.AttackBulletIndex++;
+						SpawnEnemyBulletAtLocation(enemyState.Type, bulletLocation);
+					}
+					else
+					{
+						break;
+					}
+				}
+				
+				// Update the enemies delta time
+				enemyState.DeltaTime += DeltaTime;
+				
+				// Move the enemies to the grid
+				if (splinePosition > length) {
+					enemyState.State = EPlayfieldEnemyState::BackToFormation;
+					enemyState.LerpAlpha = 0.0f;
+					//enemyState.Enemy->Destroy();
+					//doneEnemies.Push(Iter.GetIndex());
+				}
 			} break;
+				
+			case EPlayfieldEnemyState::BackToFormation:
+			{
+				FVector target = GetGridLocationFromAddress(enemyState.GridAddress);
+				FVector bounds = GetActorLocation() - Bounds->GetScaledBoxExtent() - Grid.CellExtent.Y;
+				target += FVector(0.0f, bounds.Y, 0.0f);
+				enemyState.Enemy->SetActorLocation(target);
+				
+				enemyState.State = EPlayfieldEnemyState::ToFormation;
+				enemyState.LerpAlpha = 0.0f;
+			} break;
+		}
+		
+		
+		// Calculate Global Attacking State
+		if (enemyState.State != EPlayfieldEnemyState::Formation)
+		{
+			readyForAttack = false;
 		}
 	}
 	
@@ -220,6 +302,12 @@ void APlayfield::Tick( float DeltaTime )
 		// TODO: Signal Blueprints for a transition
 		int32 index = doneEnemies[doneIndex];
 		Enemies.RemoveAt(index);
+	}
+	
+	// Start the attack
+	if (readyForAttack && WaitingForWaveClear)
+	{
+		Attacking = true;
 	}
 }
 
@@ -296,6 +384,8 @@ AActor* APlayfield::SpawnEnemyFromTableRow(const FPlayfieldSpawnTableRow& row)
 	
 	enemy.AttackSpline = FindSplineByName(row.AttackSpline);
 	ParseBulletString(row.AttackBullets, enemy.AttackBullets);
+	enemy.AttackTime = row.AttackTime / 1000.0f;
+	enemy.AttackAlpha = 0.0f;
 	enemy.AttackBulletIndex = 0;
 	
 	enemy.LerpAlpha = 0.0f;

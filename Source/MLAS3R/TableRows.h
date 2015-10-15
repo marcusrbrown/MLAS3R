@@ -30,5 +30,8 @@ struct MLAS3R_API FPlayfieldSpawnTableRow : public FTableRowBase
 	FString AttackSpline;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
+	int32 AttackTime;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
 	FString AttackBullets;
 };

@@ -1,30 +1,40 @@
-Name,EnemyType,StartTime,Speed,GridAddress,IntroSpline,IntroBullets,AttackSpline,AttackBullets
-0,RedEnemy,1000,3500,37,IntroLeft,"0.15, 0.25, 0.35",AttackLeft,"0.10, 0.20, 0.80, 0.90"
-1,RedEnemy,1500,3500,36,IntroLeft,"0.15, 0.25, 0.35",AttackLeft,"0.10, 0.20, 0.80, 0.90"
-2,RedEnemy,2000,3500,35,IntroLeft,"0.15, 0.25, 0.35",AttackLeft,"0.10, 0.20, 0.80, 0.90"
-3,BlueEnemy,2000,3500,34,IntroRight,"0.15, 0.25, 0.38",AttackRight,"0.10, 0.20, 0.80, 0.90"
-4,BlueEnemy,2500,3500,33,IntroRight,"0.15, 0.25, 0.38",AttackRight,"0.10, 0.20, 0.80, 0.90"
-5,BlueEnemy,3000,3500,32,IntroRight,"0.15, 0.25, 0.38",AttackRight,"0.10, 0.20, 0.80, 0.90"
-6,GreenEnemy,4500,3500,31,DiagonalAttackLeft,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85",AttackRight,"0.10, 0.20, 0.80, 0.90"
-7,GreenEnemy,4500,3500,30,DiagonalAttackRight,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85",AttackRight,"0.10, 0.20, 0.80, 0.90"
-8,GreenEnemy,4750,3500,29,DiagonalAttackLeft,"0.15,0.25,0.35,0.45,0.55,0.65,0.8,0.9",AttackRight,"0.10, 0.20, 0.80, 0.90"
-9,GreenEnemy,4750,3500,28,DiagonalAttackRight,"0.15,0.25,0.35,0.45,0.55,0.65,0.8,0.9",AttackRight,"0.10, 0.20, 0.80, 0.90"
-10,GreenEnemy,5000,3500,27,DiagonalAttackLeft,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85",AttackRight,"0.10, 0.20, 0.80, 0.90"
-11,GreenEnemy,5000,3500,26,DiagonalAttackRight,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85",AttackRight,"0.10, 0.20, 0.80, 0.90"
-12,BlueEnemy,9000,3500,25,CenterAttackRight,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85",AttackRight,"0.10, 0.20, 0.80, 0.90"
-13,BlueEnemy,9000,3500,24,CenterAttackLeft,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85",AttackRight,"0.10, 0.20, 0.80, 0.90"
-14,BlueEnemy,9500,3500,23,CenterAttackRight,"0.15, 0.25, 0.38",AttackRight,"0.10, 0.20, 0.80, 0.90"
-15,BlueEnemy,9500,3500,22,CenterAttackLeft,"0.15, 0.25, 0.38",AttackRight,"0.10, 0.20, 0.80, 0.90"
-16,BlueEnemy,9800,3500,21,CenterAttackRight,"0.15, 0.25, 0.38",AttackRight,"0.10, 0.20, 0.80, 0.90"
-17,BlueEnemy,9800,3500,20,CenterAttackLeft,"0.15, 0.25, 0.38",AttackRight,"0.10, 0.20, 0.80, 0.90"
-18,Wait,0,0,0,,,,
-19,GreenEnemy,5000,3500,29,CenterCircle,0.33,AttackCenterBreakLeft,0.8
-20,GreenEnemy,5250,3500,28,CenterCircle,0.34,AttackCenterBreakRight,0.8
-21,GreenEnemy,5500,3500,27,CenterCircle,0.35,AttackCenterBreakLeft,0.8
-22,GreenEnemy,5750,3500,26,CenterCircle,0.36,AttackCenterBreakRight,0.8
-23,GreenEnemy,6000,3500,25,CenterCircle,0.37,AttackCenterBreakLeft,0.8
-24,GreenEnemy,6250,3500,24,CenterCircle,0.38,AttackCenterBreakRight,0.8
-25,GreenEnemy,6500,3500,23,CenterCircle,0.39,AttackCenterBreakLeft,0.8
-26,GreenEnemy,6750,3500,22,CenterCircle,0.4,AttackCenterBreakRight,0.8
-27,GreenEnemy,7000,3500,21,CenterCircle,0.41,AttackCenterBreakLeft,0.8
-28,GreenEnemy,7250,3500,20,CenterCircle,0.42,AttackCenterBreakRight,0.8
+Name,EnemyType,StartTime,Speed,GridAddress,IntroSpline,IntroBullets,AttackSpline,AttackTime,AttackBullets
+0,RedEnemy,1000,4000,37,IntroLeft,"0.15, 0.25, 0.35",ATK_DiveAndLoop1,1000,"0.15, 0.25, 0.35"
+1,RedEnemy,1150,4000,36,IntroLeft,"0.15, 0.25, 0.35",ATK_DiveAndLoop1,1500,"0.15, 0.25, 0.35"
+2,RedEnemy,1300,4000,35,IntroLeft,"0.15, 0.25, 0.35",ATK_DiveAndLoop1,2000,"0.15,0.25,0.35,0.45,0.55,0.65,0.8,0.9"
+3,BlueEnemy,2000,4000,34,IntroRight,"0.15, 0.25, 0.38",ATK_DiveAndLoop4,18000,"0.15,0.25,0.35,0.45,0.55,0.65,0.8,0.9"
+4,BlueEnemy,2150,4000,33,IntroRight,"0.15, 0.25, 0.38",ATK_DiveAndLoop3,18000,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85"
+5,BlueEnemy,2300,4000,32,IntroRight,"0.15, 0.25, 0.38",ATK_DiveAndLoop2,4000,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85"
+6,GreenEnemy,6500,4000,31,DiagonalAttackLeft,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85",ATK_DiveAndLoop2,18000,"0.15, 0.25, 0.38"
+7,GreenEnemy,6500,4000,30,DiagonalAttackRight,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85",ATK_DiveAndLoop3,8000,"0.15, 0.25, 0.38"
+8,GreenEnemy,6650,4000,29,DiagonalAttackLeft,"0.15,0.25,0.35,0.45,0.55,0.65,0.8,0.9",ATK_DiveAndLoop2,5000,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85"
+9,GreenEnemy,6650,4000,28,DiagonalAttackRight,"0.15,0.25,0.35,0.45,0.55,0.65,0.8,0.9",ATK_DiveAndLoop1,17000,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85"
+10,GreenEnemy,6800,4000,27,DiagonalAttackLeft,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85",ATK_DiveAndLoop3,8500,"0.15, 0.25, 0.38"
+11,GreenEnemy,6800,4000,26,DiagonalAttackRight,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85",ATK_DiveAndLoop2,6000,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85"
+12,RedEnemy,11000,4000,25,CenterAttackRight,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85",ATK_DiveAndLoop1,16000,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85"
+13,BlueEnemy,11000,4000,24,CenterAttackLeft,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85",ATK_DiveAndLoop4,13000,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85"
+14,RedEnemy,11150,4000,23,CenterAttackRight,"0.15, 0.25, 0.38",ATK_DiveAndLoop4,12050,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85"
+15,BlueEnemy,11150,4000,22,CenterAttackLeft,"0.15, 0.25, 0.38",ATK_DiveAndLoop1,15000,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85"
+16,RedEnemy,11300,4000,21,CenterAttackRight,"0.15, 0.25, 0.38",ATK_DiveAndLoop4,12000,"0.15,0.25,0.35,0.45,0.55,0.65,0.8,0.9"
+17,BlueEnemy,11300,4000,20,CenterAttackLeft,"0.15, 0.25, 0.38",ATK_DiveAndLoop3,9000,"0.15,0.25,0.35,0.45,0.55,0.65,0.8,0.9"
+18,GreenEnemy,17000,4000,19,IntroLeft,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85",ATK_DiveAndLoop1,2100,"0.15, 0.25, 0.38"
+19,GreenEnemy,17250,4000,18,IntroRight,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85",ATK_DiveAndLoop2,2150,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85"
+20,GreenEnemy,16500,4000,17,IntroLeft,"0.15, 0.25, 0.35",ATK_DiveAndLoop3,2300,"0.15, 0.25, 0.38"
+21,GreenEnemy,16750,4000,16,IntroRight,"0.15, 0.25, 0.35",ATK_DiveAndLoop4,2350,"0.15, 0.25, 0.35"
+22,GreenEnemy,17000,4000,15,IntroLeft,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85",ATK_DiveAndLoop1,2800,"0.15, 0.25, 0.35"
+23,GreenEnemy,17250,4000,14,IntroRight,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85",ATK_DiveAndLoop2,2900,"0.15,0.25,0.35,0.45,0.55,0.65,0.8,0.9"
+24,RedEnemy,17500,4000,13,IntroLeft,"0.15, 0.25, 0.35",ATK_DiveAndLoop3,3400,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85"
+25,RedEnemy,17750,4000,12,IntroRight,"0.15, 0.25, 0.35",ATK_DiveAndLoop4,3500,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85"
+26,BlueEnemy,18000,4000,11,IntroLeft,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85",ATK_DiveAndLoop1,3900,"0.15, 0.25, 0.38"
+27,BlueEnemy,18250,4000,10,IntroRight,"0.1,0.2,0.3,0.4,0.5,0.6,0.75,0.85",ATK_DiveAndLoop2,3900,"0.15,0.25,0.35,0.45,0.55,0.65,0.8,0.9"
+28,Wait,0,0,0,,,,,
+29,GreenEnemy,5000,4000,29,CenterCircle,0.33,ATK_DiveAndLoop,,0.8
+30,GreenEnemy,5150,4000,28,CenterCircle,0.34,ATK_DiveAndLoop,,0.8
+31,GreenEnemy,5300,4000,27,CenterCircle,0.35,ATK_DiveAndLoop,,0.8
+32,GreenEnemy,5450,4000,26,CenterCircle,0.36,ATK_DiveAndLoop,,0.8
+33,GreenEnemy,5600,4000,25,CenterCircle,0.37,ATK_DiveAndLoop,,0.8
+34,GreenEnemy,5750,4000,24,CenterCircle,0.38,ATK_DiveAndLoop,,0.8
+35,GreenEnemy,5900,4000,23,CenterCircle,0.39,ATK_DiveAndLoop,,0.8
+36,GreenEnemy,6050,4000,22,CenterCircle,0.4,ATK_DiveAndLoop,,0.8
+37,GreenEnemy,6200,4000,21,CenterCircle,0.41,ATK_DiveAndLoop,,0.8
+38,GreenEnemy,6350,4000,20,CenterCircle,0.42,ATK_DiveAndLoop,,0.8

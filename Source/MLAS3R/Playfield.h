@@ -15,6 +15,7 @@ enum class EPlayfieldEnemyState : uint8
 	Formation,
 	ToAttack,
 	Attack,
+	BackToFormation,
 	Dead
 };
 
@@ -49,6 +50,12 @@ struct MLAS3R_API FPlayfieldEnemyData
 	
 	UPROPERTY()
 	int32 IntroBulletIndex;
+	
+	UPROPERTY()
+	float AttackTime;
+	
+	UPROPERTY()
+	float AttackAlpha;
 	
 	UPROPERTY()
 	USplineComponent* AttackSpline;
@@ -192,4 +199,6 @@ private:
 	FPlayfieldGridData Grid;
 	
 	bool WaitingForWaveClear;
+	
+	bool Attacking;
 };
