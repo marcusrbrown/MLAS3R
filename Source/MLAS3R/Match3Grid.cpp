@@ -278,6 +278,24 @@ void AMatch3Grid::OnTileFallingFinished(AMatch3GridTile* Tile, int32 LandingGrid
 	}
 
     FallingTiles.Remove(Tile);
+    TilesToCheck.Add(Tile);
+
+    if (FallingTiles.Num() == 0)
+    {
+        // Now that all tiles have finished falling, check for cascading matches.
+        for (auto checkTile : TilesToCheck)
+        {
+            LastLegalMatch = FindNeighbors(checkTile);
+
+            if (LastLegalMatch.Num() > 0)
+            {
+                ExecuteMatch(LastLegalMatch);
+                return;
+            }
+        }
+
+        TilesToCheck.Empty();
+    }
 }
 
 void AMatch3Grid::OnTileMatchingFinished(AMatch3GridTile* Tile)
@@ -433,7 +451,6 @@ void AMatch3Grid::ExecuteMatch(TArray<AMatch3GridTile*> MatchingTiles)
                         && (tileAbove->TileState != EMatch3TileState::Falling))
                     {
                         FallingTiles.Add(tileAbove);
-                        tileAbove->StartFalling();
                     }
                 }
             }
@@ -444,6 +461,11 @@ void AMatch3Grid::ExecuteMatch(TArray<AMatch3GridTile*> MatchingTiles)
         }
 
         tile->OnMatched(GetLastMove());
+    }
+
+    for (auto tile : FallingTiles)
+    {
+        tile->StartFalling();
     }
 }
 
