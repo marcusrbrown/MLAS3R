@@ -88,6 +88,7 @@ void AMatch3GridTile::StartFalling(bool bUseCurrentWorldLocation)
 	float fallDistance = 0.0f;
 
 	FallingStartTime = GetWorld()->GetTimeSeconds();
+    TotalFallingTime = 0.0f;
 	FallingStartLocation = GetActorLocation();
 
 	// Tiles fall at a fixed rate of 120 FPS.
@@ -161,8 +162,17 @@ void AMatch3GridTile::FinishFalling()
 
 void AMatch3GridTile::TickFalling()
 {
-    SetActorLocation(FallingEndLocation);
-    FinishFalling();
+    TotalFallingTime += 0.005f;
+    float alpha = FMath::Clamp(TotalFallingTime, 0.0f, 1.0f);
+    FVector FallPosition = FMath::Lerp(FallingStartLocation, FallingEndLocation, alpha);
+
+    SetActorLocation(FallPosition);
+
+    if (alpha >= 1.0f)
+    {
+        SetActorLocation(FallingEndLocation);
+        FinishFalling();
+    }
 }
 
 int32 AMatch3GridTile::GetGridAddress() const
