@@ -276,6 +276,8 @@ void AMatch3Grid::OnTileFallingFinished(AMatch3GridTile* Tile, int32 LandingGrid
 		// TODO: marcus@HV: Verify.
 		Tile->SetGridAddress(returnGridAddress);
 	}
+
+    FallingTiles.Remove(Tile);
 }
 
 void AMatch3Grid::OnTileMatchingFinished(AMatch3GridTile* Tile)
@@ -430,6 +432,7 @@ void AMatch3Grid::ExecuteMatch(TArray<AMatch3GridTile*> MatchingTiles)
                     if ((tileAbove->TileState != EMatch3TileState::Removed)
                         && (tileAbove->TileState != EMatch3TileState::Falling))
                     {
+                        FallingTiles.Add(tileAbove);
                         tileAbove->StartFalling();
                     }
                 }
