@@ -190,4 +190,6 @@ private:
 	TArray<FPlayfieldEnemyData> Enemies;
 	
 	FPlayfieldGridData Grid;
+	
+	bool WaitingForWaveClear;
 };
