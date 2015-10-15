@@ -95,7 +95,7 @@ void APlayfield::Tick( float DeltaTime )
 				{
 					CurrentRow = 0;
 					SpeedMultiplier += 0.25;
-					PlayTime = -5.0f; // 5 second delay
+                    PlayTime = 0.0f;
 					row = ((UDataTable*)Levels[CurrentLevel])->FindRow<FPlayfieldSpawnTableRow>(*FString::FromInt(CurrentRow), TEXT(""), false);
 				}
 				
@@ -158,7 +158,6 @@ void APlayfield::Tick( float DeltaTime )
 					float t = enemyState.IntroBullets[enemyState.IntroBulletIndex];
 					if (bulletTime >= t)
 					{
-						UE_LOG(LogTemp, Log, TEXT("SPAWNING BULLET %d @ %f"), enemyState.IntroBulletIndex, t);
 						auto bulletLocation = enemyState.IntroSpline->GetLocationAtDistanceAlongSpline(t * length, ESplineCoordinateSpace::World);
 						enemyState.IntroBulletIndex++;
 						SpawnEnemyBulletAtLocation(enemyState.Type, bulletLocation);
