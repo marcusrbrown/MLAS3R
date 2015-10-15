@@ -8,6 +8,13 @@ MuerteASecuestradores_MLAZ3R
 No (We made everything except the font)
 
 
+Description:
+M'LAZ3R is a game built upon the shoulders of giants. Arcade style shooter and casual match-3 clash in a mix of old and new.
+With each wave, enemies appear faster and in more difficult patterns....
+Simultaneously, your M'Laz3r (Multi-Layer Atomization Zapper, 3rd Revision) begins to charge...
+If ever the enemies become too overbearing, then let M'LAZ3R loose! You'll freeze time and send your enemies into the M-Dimension, where you can match your enemies with the colored blocks to destroy them.
+
+Currently, we do have the two styles of gameplay implemented, but they are not fully integrated with one another. The M'LAZ3R will pull enemies in but 
 
 PM:
 
