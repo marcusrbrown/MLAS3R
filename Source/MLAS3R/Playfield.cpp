@@ -95,7 +95,7 @@ void APlayfield::Tick( float DeltaTime )
 				{
 					CurrentRow = 0;
 					SpeedMultiplier += 0.25;
-					PlayTime = -5.0f; // 5 second delay
+                    PlayTime = 0.0f;
 					row = ((UDataTable*)Levels[CurrentLevel])->FindRow<FPlayfieldSpawnTableRow>(*FString::FromInt(CurrentRow), TEXT(""), false);
 				}
 				
