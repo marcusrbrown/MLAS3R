@@ -464,6 +464,18 @@ void APlayfield::SetPlayerIsDead(bool value)
 	PlayerIsDead = value;
 }
 
+void APlayfield::ToggleGrid(bool bEnabled)
+{
+    for (auto enemyState : Enemies)
+    {
+        if (IsValid(enemyState.Enemy))
+        {
+            enemyState.Enemy->SetActorHiddenInGame(!bEnabled);
+            enemyState.Enemy->SetActorEnableCollision(bEnabled);
+        }
+    }
+}
+
 USplineComponent* APlayfield::FindSplineByName(FString name)
 {
 	for (TActorIterator<ASplineActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)

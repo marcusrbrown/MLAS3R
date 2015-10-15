@@ -169,6 +169,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Gameplay")
 	void SetPlayerIsDead(bool value);
+
+    UFUNCTION(BlueprintCallable, Category = "Gameplay")
+    void ToggleGrid(bool bEnabled);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Levels")
 	TArray<UDataTable*> Levels;
