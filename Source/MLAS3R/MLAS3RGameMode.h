@@ -3,6 +3,9 @@
 #pragma once
 
 #include "GameFramework/GameMode.h"
+#include "MLAS3RPlayerController.h"
+#include "Playfield.h"
+#include "Match3Grid.h"
 #include "MLAS3RGameMode.generated.h"
 
 /** Reward granted during Match 3. */
@@ -31,6 +34,15 @@ class MLAS3R_API AMLAS3RGameMode : public AGameMode
 	
 public:
 	void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "References")
+	AMLAS3RPlayerController* PlayerController;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "References")
+	APlayfield* Playfield;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "References")
+	AMatch3Grid* Match3Grid;
 
 	/** The speed at which tiles fall into place. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Match 3 Game")
