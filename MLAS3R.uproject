@@ -11,6 +11,12 @@
 			"AdditionalDependencies": [
 				"Engine"
 			]
-		}
+		},
+		{
+			"Name": "MLAS3REditor",
+			"Type": "Editor",
+			"LoadingPhase": "PostEngineInit"
+		},
+		
 	]
 }

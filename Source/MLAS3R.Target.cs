@@ -21,5 +21,6 @@ public class MLAS3RTarget : TargetRules
 		)
 	{
 		OutExtraModuleNames.AddRange( new string[] { "MLAS3R" } );
+		if (UEBuildConfiguration.bBuildEditor) OutExtraModuleNames.Add("MLAS3REditor");
 	}
 }

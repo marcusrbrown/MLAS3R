@@ -20,6 +20,6 @@ public class MLAS3REditorTarget : TargetRules
 		ref List<string> OutExtraModuleNames
 		)
 	{
-		OutExtraModuleNames.AddRange( new string[] { "MLAS3R" } );
+		OutExtraModuleNames.AddRange( new string[] { "MLAS3R", "MLAS3REditor" } );
 	}
 }
