@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MLAS3R.h"
+#include "SplineTriggerComponent.h"
 #include "SplineActor.h"
 
 
@@ -12,6 +13,11 @@ ASplineActor::ASplineActor()
 	
 	Spline = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
 	RootComponent = Spline;
+	
+#if WITH_EDITORONLY_DATA
+	SplineTriggerComponent = CreateEditorOnlyDefaultSubobject<USplineTriggerComponent>(TEXT("SplineTrigger"));
+	SplineTriggerComponent->Owner = this;
+#endif
 }
 
 // Called when the game starts or when spawned
