@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "4.9",
+	"EngineAssociation": "4.10",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -16,7 +16,6 @@
 			"Name": "MLAS3REditor",
 			"Type": "Editor",
 			"LoadingPhase": "PostEngineInit"
-		},
-		
+		}
 	]
 }
