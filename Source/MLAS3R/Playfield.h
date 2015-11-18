@@ -5,6 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "Runtime/Engine/Classes/Components/SplineComponent.h"
 #include "TableRows.h"
+#include "SplineActor.h"
 #include "Playfield.generated.h"
 
 UENUM()
@@ -40,16 +41,25 @@ struct MLAS3R_API FPlayfieldEnemyData
 	float Speed;
 	
 	UPROPERTY()
+	bool FireEnabled;
+	
+	UPROPERTY()
+	float FireDelay;
+	
+	UPROPERTY()
+	float FireDelayAlpha;
+	
+	UPROPERTY()
 	int32 GridAddress;
 	
 	UPROPERTY()
 	USplineComponent* IntroSpline;
 	
 	UPROPERTY()
-	TArray<float> IntroBullets;
+	TArray<FSplineTriggerNode> IntroTriggers;
 	
 	UPROPERTY()
-	int32 IntroBulletIndex;
+	int32 IntroTriggerIndex;
 	
 	UPROPERTY()
 	float AttackTime;
@@ -61,10 +71,10 @@ struct MLAS3R_API FPlayfieldEnemyData
 	USplineComponent* AttackSpline;
 	
 	UPROPERTY()
-	TArray<float> AttackBullets;
+	TArray<FSplineTriggerNode> AttackTriggers;
 	
 	UPROPERTY()
-	int32 AttackBulletIndex;
+	int32 AttackTriggerIndex;
 	
 	UPROPERTY()
 	float LerpAlpha;
@@ -195,7 +205,7 @@ public:
 #endif
 	
 protected:
-	USplineComponent* FindSplineByName(FString name);
+	ASplineActor* FindSplineByName(FString name);
 	
 	void ParseBulletString(const FString& bulletString, TArray<float>& OutArray);
 	

@@ -18,20 +18,17 @@ struct MLAS3R_API FPlayfieldSpawnTableRow : public FTableRowBase
 	float Speed;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
+	float FireDelay;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
 	int32 GridAddress;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
 	FString IntroSpline;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
-	FString IntroBullets;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
 	FString AttackSpline;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
 	int32 AttackTime;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
-	FString AttackBullets;
 };

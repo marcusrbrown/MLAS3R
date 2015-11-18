@@ -3,7 +3,6 @@
 #include "MLAS3R.h"
 #include "Playfield.h"
 #include "TableRows.h"
-#include "SplineActor.h"
 #include "Enemy.h"
 
 namespace
@@ -154,18 +153,41 @@ void APlayfield::Tick( float DeltaTime )
 				enemyState.Enemy->SetActorLocation(location);
 				
 				// Check to see if we need to fire
-				while (enemyState.IntroBulletIndex < enemyState.IntroBullets.Num())
+				while (enemyState.IntroTriggerIndex < enemyState.IntroTriggers.Num())
 				{
-					float t = enemyState.IntroBullets[enemyState.IntroBulletIndex];
-					if (bulletTime >= t)
+					auto trigger = enemyState.IntroTriggers[enemyState.IntroTriggerIndex];
+					float t = trigger.Time;
+					if (bulletTime >= t && trigger.Action == ESplineTriggerAction::Fire)
 					{
-						auto bulletLocation = enemyState.IntroSpline->GetLocationAtDistanceAlongSpline(t * length, ESplineCoordinateSpace::World);
-						enemyState.IntroBulletIndex++;
-						SpawnEnemyBulletAtLocation(enemyState.Type, bulletLocation);
+						enemyState.IntroTriggerIndex++;
+						
+						if (trigger.bActionValue)
+						{
+							enemyState.FireEnabled = true;
+							enemyState.FireDelayAlpha = enemyState.FireDelay;
+						}
+						else
+						{
+							enemyState.FireEnabled = false;
+						}
 					}
 					else
 					{
 						break;
+					}
+				}
+				
+				// Check to see if we need to fire
+				if (enemyState.FireEnabled)
+				{
+					enemyState.FireDelayAlpha += DeltaTime * SpeedMultiplier;
+					
+					if (enemyState.FireDelayAlpha >= enemyState.FireDelay)
+					{
+						enemyState.FireDelayAlpha = 0.0f;
+						
+						auto bulletLocation = enemyState.IntroSpline->GetLocationAtDistanceAlongSpline(clampedPosition, ESplineCoordinateSpace::World);
+						SpawnEnemyBulletAtLocation(enemyState.Type, bulletLocation);
 					}
 				}
 				
@@ -239,7 +261,7 @@ void APlayfield::Tick( float DeltaTime )
 				{
 					enemyState.State = EPlayfieldEnemyState::Attack;
 					enemyState.DeltaTime = 0.0f;
-					enemyState.AttackBulletIndex = 0;
+					enemyState.AttackTriggerIndex = 0;
 				}
 			} break;
 				
@@ -256,18 +278,41 @@ void APlayfield::Tick( float DeltaTime )
 				enemyState.Enemy->SetActorLocation(location);
 				
 				// Check to see if we need to fire
-				while (enemyState.AttackBulletIndex < enemyState.AttackBullets.Num())
+				while (enemyState.AttackTriggerIndex < enemyState.AttackTriggers.Num())
 				{
-					float t = enemyState.AttackBullets[enemyState.AttackBulletIndex];
-					if (bulletTime >= t)
+					auto trigger = enemyState.AttackTriggers[enemyState.AttackTriggerIndex];
+					float t = trigger.Time;
+					if (bulletTime >= t && trigger.Action == ESplineTriggerAction::Fire)
 					{
-						auto bulletLocation = enemyState.AttackSpline->GetLocationAtDistanceAlongSpline(t * length, ESplineCoordinateSpace::World);
-						enemyState.AttackBulletIndex++;
-						SpawnEnemyBulletAtLocation(enemyState.Type, bulletLocation);
+						enemyState.AttackTriggerIndex++;
+						
+						if (trigger.bActionValue)
+						{
+							enemyState.FireEnabled = true;
+							enemyState.FireDelayAlpha = enemyState.FireDelay;
+						}
+						else
+						{
+							enemyState.FireEnabled = false;
+						}
 					}
 					else
 					{
 						break;
+					}
+				}
+				
+				// Check to see if we need to fire
+				if (enemyState.FireEnabled)
+				{
+					enemyState.FireDelayAlpha += DeltaTime * SpeedMultiplier;
+					
+					if (enemyState.FireDelayAlpha >= enemyState.FireDelay)
+					{
+						enemyState.FireDelayAlpha = 0.0f;
+						
+						auto bulletLocation = enemyState.AttackSpline->GetLocationAtDistanceAlongSpline(clampedPosition, ESplineCoordinateSpace::World);
+						SpawnEnemyBulletAtLocation(enemyState.Type, bulletLocation);
 					}
 				}
 				
@@ -403,8 +448,7 @@ AActor* APlayfield::SpawnYellowEnemy()
 
 AActor* APlayfield::SpawnEnemyFromTableRow(const FPlayfieldSpawnTableRow& row)
 {
-	auto introSpline = FindSplineByName(row.IntroSpline);
-	if (introSpline == nullptr) return nullptr;
+	if (!FindSplineByName(row.IntroSpline)) return nullptr;
 	
 	// Store off our row into the enemy state
 	FPlayfieldEnemyData enemy;
@@ -414,15 +458,30 @@ AActor* APlayfield::SpawnEnemyFromTableRow(const FPlayfieldSpawnTableRow& row)
 	enemy.Speed = row.Speed * SpeedMultiplier;
 	enemy.GridAddress = row.GridAddress;
 	
-	enemy.IntroSpline = introSpline;
-	ParseBulletString(row.IntroBullets, enemy.IntroBullets);
-	enemy.IntroBulletIndex = 0;
+	enemy.FireEnabled = false;
+	enemy.FireDelay = row.FireDelay / 1000.0f;
+	enemy.FireDelayAlpha = 0.0f;
+
+	enemy.IntroSpline = nullptr;
+	auto introSpline = FindSplineByName(row.IntroSpline);
+	if (introSpline)
+	{
+		enemy.IntroSpline = introSpline->Spline;
+		enemy.IntroTriggers = introSpline->Triggers;
+		enemy.IntroTriggerIndex = 0;
+	}
 	
-	enemy.AttackSpline = FindSplineByName(row.AttackSpline);
-	ParseBulletString(row.AttackBullets, enemy.AttackBullets);
+	enemy.AttackSpline = nullptr;
+	auto attackSpline = FindSplineByName(row.AttackSpline);
+	if (attackSpline)
+	{
+		enemy.AttackSpline = attackSpline->Spline;
+		enemy.AttackTriggers = attackSpline->Triggers;
+	}
+	enemy.AttackTriggerIndex = 0;
+	
 	enemy.AttackTime = row.AttackTime / 1000.0f;
 	enemy.AttackAlpha = 0.0f;
-	enemy.AttackBulletIndex = 0;
 	
 	enemy.LerpAlpha = 0.0f;
 	enemy.LerpDuration = enemy.Speed / 1000.0f;
@@ -528,12 +587,12 @@ void APlayfield::ResetState()
     Enemies.Reset();
 }
 
-USplineComponent* APlayfield::FindSplineByName(FString name)
+ASplineActor* APlayfield::FindSplineByName(FString name)
 {
 	for (TActorIterator<ASplineActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
-		if (ActorItr->GetName() == name) return ActorItr->Spline;
-		if (ActorItr->ActorHasTag(FName(*name))) return ActorItr->Spline;
+		if (ActorItr->GetName() == name) return *ActorItr;
+		if (ActorItr->ActorHasTag(FName(*name))) return *ActorItr;
 	}
 	return nullptr;
 }
