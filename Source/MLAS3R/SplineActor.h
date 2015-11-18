@@ -53,7 +53,6 @@ public:
 	
 private:
 #if WITH_EDITORONLY_DATA
-	UPROPERTY()
 	USplineTriggerComponent* SplineTriggerComponent;
 #endif
 	
