@@ -13,6 +13,13 @@ void AMLAS3RGameMode::BeginPlay()
 		gameSettings->SetVSyncEnabled(true);
 		gameSettings->ApplySettings(false);
 	}
+
+	auto gridActorIterator = TActorIterator<AMatch3Grid>(GetWorld());
+
+	if (gridActorIterator)
+	{
+		Match3Grid = *gridActorIterator;
+	}
 }
 
 
