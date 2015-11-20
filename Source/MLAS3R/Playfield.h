@@ -190,6 +190,14 @@ public:
 	TArray<UDataTable*> Levels;
 	
 public:
+	UFUNCTION(BlueprintImplementableEvent, Category = "Events")
+	void NotifyWaveBegin(int32 wave);
+	
+	UFUNCTION(BlueprintImplementableEvent, Category = "Events")
+	void NotifyWaveEnd(int32 wave);
+	
+	
+public:
 	// Sets default values for this actor's properties
 	APlayfield();
 	
