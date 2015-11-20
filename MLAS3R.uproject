@@ -20,10 +20,6 @@
 	],
 	"Plugins": [
 		{
-			"Name": "IOSFlurry",
-			"Enabled": true
-		},
-		{
 			"Name": "AnalyticsBlueprintLibrary",
 			"Enabled": true
 		}
