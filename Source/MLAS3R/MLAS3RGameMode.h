@@ -25,7 +25,7 @@ struct FMatch3Reward
 };
 
 /** Game State **/
-UENUM()
+UENUM(Blueprintable, Category = "State")
 enum class EGameState : uint8
 {
 	None,
