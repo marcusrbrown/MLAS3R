@@ -24,6 +24,18 @@ void AMLAS3RGameMode::BeginPlay()
 	{
 		Match3Grid = *gridActorIterator;
 	}
+
+	auto playfieldActorIterator = TActorIterator<APlayfield>(GetWorld());
+	if (playfieldActorIterator)
+	{
+		Playfield = *playfieldActorIterator;
+	}
+
+	auto pcActorIterator = TActorIterator<AMLAS3RPlayerController>(GetWorld());
+	if (pcActorIterator)
+	{
+		PlayerController = *pcActorIterator;
+	}
 	
 	Super::BeginPlay();
 }
