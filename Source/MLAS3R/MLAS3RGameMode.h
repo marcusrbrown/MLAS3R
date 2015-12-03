@@ -24,6 +24,22 @@ struct FMatch3Reward
 	float TimeAwarded;
 };
 
+/** Game State **/
+UENUM()
+enum class EGameState : uint8
+{
+	None,
+	Start,
+	Play,
+	Match3,
+	GameOver
+};
+
+/**
+ *  Delegates
+ */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGameStateChangedDelegate, EGameState, ActiveState, EGameState, PreviousState);
+
 /**
  * 
  */
@@ -33,7 +49,11 @@ class MLAS3R_API AMLAS3RGameMode : public AGameMode
 	GENERATED_BODY()
 	
 public:
+	AMLAS3RGameMode();
+	
 	void BeginPlay() override;
+	
+	void Tick(float DeltaSeconds) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "References")
 	AMLAS3RPlayerController* PlayerController;
@@ -47,4 +67,21 @@ public:
 	/** The speed at which tiles fall into place. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Match 3 Game")
 	float TileFallSpeed;
+	
+	/** Game State **/
+	UFUNCTION(BlueprintCallable, Category = "State")
+	void RequestGameState(EGameState State);
+	
+	UPROPERTY(BlueprintReadOnly, Category = "State")
+	EGameState ActiveState;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "State")
+	EGameState PreviousState;
+	
+	/** Event Delegate **/
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FGameStateChangedDelegate OnStateChanged;
+	
+private:
+	EGameState PendingState;
 };

@@ -3,23 +3,50 @@
 #include "MLAS3R.h"
 #include "MLAS3RGameMode.h"
 
+AMLAS3RGameMode::AMLAS3RGameMode()
+{
+	PendingState = EGameState::None;
+}
+
 void AMLAS3RGameMode::BeginPlay()
 {
 	if(GEngine)
 	{
 		UGameUserSettings* gameSettings = GEngine->GetGameUserSettings();
 		gameSettings->SetScreenResolution(FIntPoint(768, 1024));
-		//MyGameSettings->SetFullscreenMode(EWindowMode::Fullscreen);
+		//gameSettings->SetFullscreenMode(EWindowMode::Fullscreen);
 		gameSettings->SetVSyncEnabled(true);
 		gameSettings->ApplySettings(false);
 	}
 
 	auto gridActorIterator = TActorIterator<AMatch3Grid>(GetWorld());
-
 	if (gridActorIterator)
 	{
 		Match3Grid = *gridActorIterator;
 	}
+	
+	Super::BeginPlay();
+}
+
+void AMLAS3RGameMode::Tick(float DeltaSeconds)
+{
+	if (PendingState != EGameState::None && ActiveState != PendingState)
+	{
+		PreviousState = ActiveState;
+		ActiveState = PendingState;
+		PendingState = EGameState::None;
+		
+		OnStateChanged.Broadcast(ActiveState, PreviousState);
+	}
+	
+	Super::Tick(DeltaSeconds);
+}
+
+void AMLAS3RGameMode::RequestGameState(EGameState State)
+{
+	if (State == EGameState::None) return;
+	
+	PendingState = State;
 }
 
 
