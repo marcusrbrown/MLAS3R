@@ -1,0 +1,15 @@
+# Ignore generated files
+*.sln
+*.sdf
+*.opensdf
+*.suo
+*.pdb
+
+# Ignore intermediate directories
+obj
+Intermediate
+Saved
+DerivedDataCache
+
+# Ignore logs
+*.log
