@@ -55,14 +55,17 @@ public:
 	
 	void Tick(float DeltaSeconds) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "References")
-	AMLAS3RPlayerController* PlayerController;
+    /** Return a reference to the global AMLAS3RPlayerController instance. */
+    UFUNCTION(BlueprintCallable, Category = "References")
+    class AMLAS3RPlayerController* GetPlayerController();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "References")
-	APlayfield* Playfield;
+    /** Return a reference to the global APlayfield instance. */
+    UFUNCTION(BlueprintCallable, Category = "References")
+    class APlayfield* GetPlayfield();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "References")
-	AMatch3Grid* Match3Grid;
+    /** Return a reference to the global AMatch3Grid instance. */
+    UFUNCTION(BlueprintCallable, Category = "References")
+    class AMatch3Grid* GetMatch3Grid();
 
 	/** The speed at which tiles fall into place. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Match 3 Game")
@@ -83,5 +86,14 @@ public:
 	FGameStateChangedDelegate OnStateChanged;
 	
 private:
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References", meta = (AllowPrivateAccess = "true"))
+    AMLAS3RPlayerController* PlayerController;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References", meta = (AllowPrivateAccess = "true"))
+    APlayfield* Playfield;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References", meta = (AllowPrivateAccess = "true"))
+    AMatch3Grid* Match3Grid;
+
 	EGameState PendingState;
 };

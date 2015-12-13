@@ -19,24 +19,13 @@ void AMLAS3RGameMode::BeginPlay()
 		gameSettings->ApplySettings(false);
 	}
 
-	auto gridActorIterator = TActorIterator<AMatch3Grid>(GetWorld());
-	if (gridActorIterator)
-	{
-		Match3Grid = *gridActorIterator;
-	}
+    // TODO: mrbrown@HV: These calls ensure that the PlayerController, Playfield, and Match3Grid
+    // instances are created at game startup. Remove these after all blueprints have been updated to
+    // use the appropriate accessors.
+    GetMatch3Grid();
+    GetPlayfield();
+    GetPlayerController();
 
-	auto playfieldActorIterator = TActorIterator<APlayfield>(GetWorld());
-	if (playfieldActorIterator)
-	{
-		Playfield = *playfieldActorIterator;
-	}
-
-	auto pcActorIterator = TActorIterator<AMLAS3RPlayerController>(GetWorld());
-	if (pcActorIterator)
-	{
-		PlayerController = *pcActorIterator;
-	}
-	
 	Super::BeginPlay();
 }
 
@@ -52,6 +41,51 @@ void AMLAS3RGameMode::Tick(float DeltaSeconds)
 	}
 	
 	Super::Tick(DeltaSeconds);
+}
+
+AMLAS3RPlayerController * AMLAS3RGameMode::GetPlayerController()
+{
+    if (PlayerController == nullptr)
+    {
+        auto pcActorIterator = TActorIterator<AMLAS3RPlayerController>(GetWorld());
+
+        if (pcActorIterator)
+        {
+            PlayerController = *pcActorIterator;
+        }
+    }
+
+    return PlayerController;
+}
+
+APlayfield * AMLAS3RGameMode::GetPlayfield()
+{
+    if (Playfield == nullptr)
+    {
+        auto playfieldActorIterator = TActorIterator<APlayfield>(GetWorld());
+
+        if (playfieldActorIterator)
+        {
+            Playfield = *playfieldActorIterator;
+        }
+    }
+
+    return Playfield;
+}
+
+AMatch3Grid * AMLAS3RGameMode::GetMatch3Grid()
+{
+    if (Match3Grid == nullptr)
+    {
+        auto gridActorIterator = TActorIterator<AMatch3Grid>(GetWorld());
+
+        if (gridActorIterator)
+        {
+            Match3Grid = *gridActorIterator;
+        }
+    }
+
+    return Match3Grid;
 }
 
 void AMLAS3RGameMode::RequestGameState(EGameState State)
