@@ -3,9 +3,6 @@
 #pragma once
 
 #include "GameFramework/GameMode.h"
-#include "MLAS3RPlayerController.h"
-#include "Playfield.h"
-#include "Match3Grid.h"
 #include "MLAS3RGameMode.generated.h"
 
 /** Reward granted during Match 3. */

@@ -2,6 +2,9 @@
 
 #include "MLAS3R.h"
 #include "MLAS3RGameMode.h"
+#include "MLAS3RPlayerController.h"
+#include "Playfield.h"
+#include "Match3Grid.h"
 
 AMLAS3RGameMode::AMLAS3RGameMode()
 {

@@ -12,7 +12,7 @@ AMLAS3RGameMode* UML3RBlueprintFunctionLibrary::GetMLAS3RGameMode(UObject* World
     return world != nullptr ? world->GetAuthGameMode<AMLAS3RGameMode>() : nullptr;
 }
 
-AMLAS3RPlayerController * UML3RBlueprintFunctionLibrary::GetMLAS3RPlayerController(UObject* WorldContextObject)
+AMLAS3RPlayerController* UML3RBlueprintFunctionLibrary::GetMLAS3RPlayerController(UObject* WorldContextObject)
 {
     auto* gameMode = GetMLAS3RGameMode(WorldContextObject);
 
