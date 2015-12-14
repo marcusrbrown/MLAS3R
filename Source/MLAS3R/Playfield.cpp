@@ -149,8 +149,8 @@ void APlayfield::Tick( float DeltaTime )
 				float bulletTime = clampedPosition / length;
 				
 				// Update the enemy on the spline
-				auto location = enemyState.IntroSpline->GetLocationAtDistanceAlongSpline(clampedPosition, ESplineCoordinateSpace::World);
-				enemyState.Enemy->SetActorLocation(location);
+                enemyState.Location = enemyState.IntroSpline->GetLocationAtDistanceAlongSpline(clampedPosition, ESplineCoordinateSpace::World);
+				enemyState.Enemy->SetActorLocation(enemyState.Location);
 				
 				// Check to see if we need to fire
 				while (enemyState.IntroTriggerIndex < enemyState.IntroTriggers.Num())
@@ -220,8 +220,8 @@ void APlayfield::Tick( float DeltaTime )
                 distance = FMath::Clamp(distance, 0.0f, length);
                 float alpha = distance / length;
 				
-                target = FMath::Lerp(enemyState.LerpStart, target, alpha);
-				enemyState.Enemy->SetActorLocation(target);
+                enemyState.Location = FMath::Lerp(enemyState.LerpStart, target, alpha);
+				enemyState.Enemy->SetActorLocation(enemyState.Location);
                 enemyState.LerpAlpha += DeltaTime;
 				
                 if (alpha >= 1.0f)
@@ -233,8 +233,8 @@ void APlayfield::Tick( float DeltaTime )
 				
 			case EPlayfieldEnemyState::Formation:
 			{
-				FVector target = GetGridLocationFromAddress(enemyState.GridAddress);
-				enemyState.Enemy->SetActorLocation(target);
+                enemyState.Location = GetGridLocationFromAddress(enemyState.GridAddress);
+				enemyState.Enemy->SetActorLocation(enemyState.Location);
 				
 				if (Attacking)
 				{
@@ -260,8 +260,8 @@ void APlayfield::Tick( float DeltaTime )
                 distance = FMath::Clamp(distance, 0.0f, length);
                 float alpha = distance / length;
 
-                target = FMath::Lerp(enemyState.LerpStart, target, alpha);
-                enemyState.Enemy->SetActorLocation(target);
+                enemyState.Location = FMath::Lerp(enemyState.LerpStart, target, alpha);
+                enemyState.Enemy->SetActorLocation(enemyState.Location);
                 enemyState.LerpAlpha += DeltaTime;
 				
                 if (alpha >= 1.0f)
@@ -281,8 +281,8 @@ void APlayfield::Tick( float DeltaTime )
 				float bulletTime = clampedPosition / length;
 				
 				// Update the enemy on the spline
-				auto location = enemyState.AttackSpline->GetLocationAtDistanceAlongSpline(clampedPosition, ESplineCoordinateSpace::World);
-				enemyState.Enemy->SetActorLocation(location);
+                enemyState.Location = enemyState.AttackSpline->GetLocationAtDistanceAlongSpline(clampedPosition, ESplineCoordinateSpace::World);
+				enemyState.Enemy->SetActorLocation(enemyState.Location);
 				
 				// Check to see if we need to fire
 				while (enemyState.AttackTriggerIndex < enemyState.AttackTriggers.Num())
@@ -337,7 +337,8 @@ void APlayfield::Tick( float DeltaTime )
 				FVector target = GetGridLocationFromAddress(enemyState.GridAddress);
 				FVector bounds = GetActorLocation() - Bounds->GetScaledBoxExtent() - Grid.CellExtent.Y;
 				target += FVector(0.0f, bounds.Y, 0.0f);
-				enemyState.Enemy->SetActorLocation(target);
+                enemyState.Location = target;
+				enemyState.Enemy->SetActorLocation(enemyState.Location);
 				
 				enemyState.State = EPlayfieldEnemyState::ToFormation;
 				enemyState.LerpAlpha = 0.0f;

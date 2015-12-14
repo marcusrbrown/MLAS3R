@@ -84,6 +84,9 @@ struct MLAS3R_API FPlayfieldEnemyData
 
     UPROPERTY()
     FVector LerpStart;
+
+    UPROPERTY()
+    FVector Location;
 };
 
 USTRUCT()
