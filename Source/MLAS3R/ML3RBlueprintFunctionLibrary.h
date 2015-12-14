@@ -13,6 +13,7 @@ class MLAS3R_API UML3RBlueprintFunctionLibrary : public UBlueprintFunctionLibrar
 {
     GENERATED_BODY()
 
+public:
     // NOTE: marcus@HV: The following UFUNCTIONs mimic the ones found in UGameplayStatics, so that they
     // can be used in place of those UFUNCTIONs where appropriate.
 
