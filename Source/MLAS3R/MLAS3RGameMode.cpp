@@ -22,13 +22,6 @@ void AMLAS3RGameMode::BeginPlay()
 		gameSettings->ApplySettings(false);
 	}
 
-    // TODO: marcus@HV: These calls ensure that the PlayerController, Playfield, and Match3Grid
-    // instances are created at game startup. Remove these after all blueprints have been updated to
-    // use the appropriate accessors.
-    GetMatch3Grid();
-    GetPlayfield();
-    GetPlayerController();
-
 	Super::BeginPlay();
 }
 

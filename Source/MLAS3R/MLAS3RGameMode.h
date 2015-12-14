@@ -53,15 +53,15 @@ public:
 	void Tick(float DeltaSeconds) override;
 
     /** Return a reference to the global AMLAS3RPlayerController instance. */
-    UFUNCTION(BlueprintCallable, Category = "References")
+    UFUNCTION(BlueprintPure, Category = "References")
     class AMLAS3RPlayerController* GetPlayerController();
 
     /** Return a reference to the global APlayfield instance. */
-    UFUNCTION(BlueprintCallable, Category = "References")
+    UFUNCTION(BlueprintPure, Category = "References")
     class APlayfield* GetPlayfield();
 
     /** Return a reference to the global AMatch3Grid instance. */
-    UFUNCTION(BlueprintCallable, Category = "References")
+    UFUNCTION(BlueprintPure, Category = "References")
     class AMatch3Grid* GetMatch3Grid();
 
 	/** The speed at which tiles fall into place. */
