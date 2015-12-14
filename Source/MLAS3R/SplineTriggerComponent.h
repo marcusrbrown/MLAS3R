@@ -13,5 +13,5 @@ class MLAS3R_API USplineTriggerComponent : public UPrimitiveComponent
 	
 public:	
 	UPROPERTY()
-	TWeakObjectPtr<ASplineActor> Owner;
+	ASplineActor* Owner;
 };
