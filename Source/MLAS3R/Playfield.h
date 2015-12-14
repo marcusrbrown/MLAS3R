@@ -161,6 +161,9 @@ public:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet Types")
     TSubclassOf<AActor> YellowBullet;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gameplay")
+    int32 LoopWaveStart;
 	
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	AActor* SpawnRedEnemy();

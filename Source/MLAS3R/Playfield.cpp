@@ -13,7 +13,7 @@ namespace
 }
 
 // Sets default values
-APlayfield::APlayfield() : CurrentLevel(0), CurrentRow(0), PlayTime(0.0f), SpeedMultiplier(1.0f), PlayerIsDead(false), WaitingForWaveClear(false), Attacking(false)
+APlayfield::APlayfield() : CurrentLevel(0), CurrentRow(0), PlayTime(0.0f), SpeedMultiplier(1.0f), PlayerIsDead(false), WaitingForWaveClear(false), Attacking(false), LoopWaveStart(0)
 {
 	// Set this actor to call Tick() every frame.  You can tu  rn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -93,7 +93,7 @@ void APlayfield::Tick( float DeltaTime )
 				// Restart
 				if (row == nullptr && Enemies.Num() == 0) // TODO: Can Spawn Helper Method
 				{
-					CurrentRow = 0;
+					CurrentRow = LoopWaveStart;
 					SpeedMultiplier += 0.25;
                     PlayTime = 0.0f;
 					row = ((UDataTable*)Levels[CurrentLevel])->FindRow<FPlayfieldSpawnTableRow>(*FString::FromInt(CurrentRow), TEXT(""), false);
