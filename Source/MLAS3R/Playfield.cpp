@@ -195,12 +195,19 @@ void APlayfield::Tick( float DeltaTime )
 				enemyState.DeltaTime += DeltaTime;
 				
 				// Move the enemies to the grid
-				if (splinePosition > length) {
-					enemyState.State = EPlayfieldEnemyState::ToFormation;
-					enemyState.LerpAlpha = 0.0f;
-                    enemyState.LerpStart = enemyState.Enemy->GetActorLocation();
-					//enemyState.Enemy->Destroy();
-					//doneEnemies.Push(Iter.GetIndex());
+				if (splinePosition > length)
+                {
+                    if (enemyState.GridAddress < 0)
+                    {
+                        enemyState.Enemy->Destroy();
+                        doneEnemies.Push(Iter.GetIndex());
+                    }
+                    else
+                    {
+                        enemyState.State = EPlayfieldEnemyState::ToFormation;
+                        enemyState.LerpAlpha = 0.0f;
+                        enemyState.LerpStart = enemyState.Enemy->GetActorLocation();
+                    }
 				}
 			} break;
 				
