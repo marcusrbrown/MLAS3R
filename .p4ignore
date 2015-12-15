@@ -4,6 +4,7 @@
 *.opensdf
 *.suo
 *.pdb
+*.xcworkspace
 
 # Ignore intermediate directories
 obj
@@ -13,3 +14,6 @@ DerivedDataCache
 
 # Ignore logs
 *.log
+
+# Ignore OS files
+.DS_Store
