@@ -164,7 +164,7 @@ void APlayfield::Tick( float DeltaTime )
 						if (trigger.bActionValue)
 						{
 							enemyState.FireEnabled = true;
-							enemyState.FireDelayAlpha = 0.0f;
+							enemyState.FireDelayAlpha = enemyState.FirstShotDelay;
 						}
 						else
 						{
@@ -180,11 +180,11 @@ void APlayfield::Tick( float DeltaTime )
 				// Check to see if we need to fire
 				if (enemyState.FireEnabled)
 				{
-					enemyState.FireDelayAlpha += DeltaTime * SpeedMultiplier;
+					enemyState.FireDelayAlpha -= DeltaTime * SpeedMultiplier;
 					
-					if (enemyState.FireDelayAlpha >= enemyState.FireDelay)
+					if (enemyState.FireDelayAlpha <= 0.0f)
 					{
-						enemyState.FireDelayAlpha = 0.0f;
+						enemyState.FireDelayAlpha = enemyState.FireDelay;
 						
 						auto bulletLocation = enemyState.IntroSpline->GetLocationAtDistanceAlongSpline(clampedPosition, ESplineCoordinateSpace::World);
 						SpawnEnemyBulletAtLocation(enemyState.Type, bulletLocation);
@@ -296,7 +296,7 @@ void APlayfield::Tick( float DeltaTime )
 						if (trigger.bActionValue)
 						{
 							enemyState.FireEnabled = true;
-							enemyState.FireDelayAlpha = 0.0f;
+							enemyState.FireDelayAlpha = enemyState.FirstShotDelay;
 						}
 						else
 						{
@@ -312,11 +312,11 @@ void APlayfield::Tick( float DeltaTime )
 				// Check to see if we need to fire
 				if (enemyState.FireEnabled)
 				{
-					enemyState.FireDelayAlpha += DeltaTime * SpeedMultiplier;
+					enemyState.FireDelayAlpha -= DeltaTime * SpeedMultiplier;
 					
-					if (enemyState.FireDelayAlpha >= enemyState.FireDelay)
+					if (enemyState.FireDelayAlpha <= 0.0f)
 					{
-						enemyState.FireDelayAlpha = 0.0f;
+						enemyState.FireDelayAlpha = enemyState.FireDelay;
 						
 						auto bulletLocation = enemyState.AttackSpline->GetLocationAtDistanceAlongSpline(clampedPosition, ESplineCoordinateSpace::World);
 						SpawnEnemyBulletAtLocation(enemyState.Type, bulletLocation);
@@ -467,6 +467,7 @@ AActor* APlayfield::SpawnEnemyFromTableRow(const FPlayfieldSpawnTableRow& row)
 	enemy.GridAddress = row.GridAddress;
 	
 	enemy.FireEnabled = false;
+    enemy.FirstShotDelay = row.FirstShotDelay / 1000.0f;
 	enemy.FireDelay = row.FireDelay / 1000.0f;
 	enemy.FireDelayAlpha = 0.0f;
 

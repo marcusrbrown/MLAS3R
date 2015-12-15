@@ -43,6 +43,9 @@ struct MLAS3R_API FPlayfieldEnemyData
 	UPROPERTY()
 	bool FireEnabled;
 	
+    UPROPERTY()
+    float FirstShotDelay;
+
 	UPROPERTY()
 	float FireDelay;
 	

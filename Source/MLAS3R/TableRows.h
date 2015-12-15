@@ -17,6 +17,9 @@ struct MLAS3R_API FPlayfieldSpawnTableRow : public FTableRowBase
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
 	float Speed;
 	
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
+    float FirstShotDelay;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
 	float FireDelay;
 	
