@@ -92,5 +92,5 @@ private:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References", meta = (AllowPrivateAccess = "true"))
     AMatch3Grid* Match3Grid;
 
-	EGameState PendingState;
+    TQueue<EGameState> PendingStates;
 };

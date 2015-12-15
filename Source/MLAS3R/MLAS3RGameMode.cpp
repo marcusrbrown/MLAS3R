@@ -8,7 +8,7 @@
 
 AMLAS3RGameMode::AMLAS3RGameMode()
 {
-	PendingState = EGameState::None;
+
 }
 
 void AMLAS3RGameMode::BeginPlay()
@@ -27,15 +27,20 @@ void AMLAS3RGameMode::BeginPlay()
 
 void AMLAS3RGameMode::Tick(float DeltaSeconds)
 {
-	if (PendingState != EGameState::None && ActiveState != PendingState)
-	{
-		PreviousState = ActiveState;
-		ActiveState = PendingState;
-		PendingState = EGameState::None;
-		
-		OnStateChanged.Broadcast(ActiveState, PreviousState);
-	}
-	
+    if (!PendingStates.IsEmpty())
+    {
+        EGameState pendingState = EGameState::None;
+        PendingStates.Dequeue(pendingState);
+
+        if (pendingState != EGameState::None && ActiveState != pendingState)
+        {
+            PreviousState = ActiveState;
+            ActiveState = pendingState;
+
+            OnStateChanged.Broadcast(ActiveState, PreviousState);
+        }
+    }
+
 	Super::Tick(DeltaSeconds);
 }
 
@@ -88,7 +93,7 @@ void AMLAS3RGameMode::RequestGameState(EGameState State)
 {
 	if (State == EGameState::None) return;
 	
-	PendingState = State;
+    PendingStates.Enqueue(State);
 }
 
 
