@@ -164,7 +164,7 @@ void APlayfield::Tick( float DeltaTime )
 						if (trigger.bActionValue)
 						{
 							enemyState.FireEnabled = true;
-							enemyState.FireDelayAlpha = enemyState.FireDelay;
+							enemyState.FireDelayAlpha = 0.0f;
 						}
 						else
 						{
