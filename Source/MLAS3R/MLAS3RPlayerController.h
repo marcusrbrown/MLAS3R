@@ -3,7 +3,7 @@
 #pragma once
 
 #include "GameFramework/PlayerController.h"
-#include "Match3GridTile.h"
+#include "Match3/Match3GridTile.h"
 #include "MLAS3RPlayerController.generated.h"
 
 /**

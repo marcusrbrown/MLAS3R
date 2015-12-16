@@ -4,7 +4,7 @@
 #include "MLAS3RGameMode.h"
 #include "MLAS3RPlayerController.h"
 #include "Playfield.h"
-#include "Match3Grid.h"
+#include "Match3/Match3Grid.h"
 
 AMLAS3RGameMode::AMLAS3RGameMode()
 {
