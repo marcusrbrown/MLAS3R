@@ -8,6 +8,8 @@
 #include "SplineActor.h"
 #include "Playfield.generated.h"
 
+class AEnemy;
+
 UENUM()
 enum class EPlayfieldEnemyState : uint8
 {
@@ -35,7 +37,7 @@ struct MLAS3R_API FPlayfieldEnemyData
 	float DeltaTime;
 	
 	UPROPERTY()
-	AActor* Enemy;
+	AEnemy* Enemy;
 	
 	UPROPERTY()
 	float Speed;
@@ -175,19 +177,19 @@ public:
     bool SuppressFire;
 	
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
-	AActor* SpawnRedEnemy();
+    AEnemy* SpawnRedEnemy();
 	
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
-	AActor* SpawnBlueEnemy();
+    AEnemy* SpawnBlueEnemy();
 	
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
-	AActor* SpawnGreenEnemy();
+    AEnemy* SpawnGreenEnemy();
 
     UFUNCTION(BlueprintCallable, Category = "Spawn")
-    AActor* SpawnYellowEnemy();
+    AEnemy* SpawnYellowEnemy();
 	
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
-	AActor* SpawnEnemyFromTableRow(const FPlayfieldSpawnTableRow& row);
+	AEnemy* SpawnEnemyFromTableRow(const FPlayfieldSpawnTableRow& row);
 	
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	AActor* SpawnEnemyBulletAtLocation(const FString& type, const FVector& location);

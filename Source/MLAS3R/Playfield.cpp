@@ -405,7 +405,7 @@ void APlayfield::EditorApplyScale(const FVector& DeltaScale, const FVector* Pivo
 }
 #endif
 
-AActor* APlayfield::SpawnRedEnemy()
+AEnemy* APlayfield::SpawnRedEnemy()
 {
 	UWorld* world = GetWorld();
 	if (!world) return nullptr;
@@ -420,7 +420,7 @@ AActor* APlayfield::SpawnRedEnemy()
     return actor;
 }
 
-AActor* APlayfield::SpawnBlueEnemy()
+AEnemy* APlayfield::SpawnBlueEnemy()
 {
 	UWorld* world = GetWorld();
 	if (!world) return nullptr;
@@ -435,7 +435,7 @@ AActor* APlayfield::SpawnBlueEnemy()
     return actor;
 }
 
-AActor* APlayfield::SpawnGreenEnemy()
+AEnemy* APlayfield::SpawnGreenEnemy()
 {
 	UWorld* world = GetWorld();
 	if (!world) return nullptr;
@@ -450,7 +450,7 @@ AActor* APlayfield::SpawnGreenEnemy()
     return actor;
 }
 
-AActor* APlayfield::SpawnYellowEnemy()
+AEnemy* APlayfield::SpawnYellowEnemy()
 {
     UWorld* world = GetWorld();
     if (!world) return nullptr;
@@ -465,7 +465,7 @@ AActor* APlayfield::SpawnYellowEnemy()
     return actor;
 }
 
-AActor* APlayfield::SpawnEnemyFromTableRow(const FPlayfieldSpawnTableRow& row)
+AEnemy* APlayfield::SpawnEnemyFromTableRow(const FPlayfieldSpawnTableRow& row)
 {
 	if (!FindSplineByName(row.IntroSpline)) return nullptr;
 	
@@ -570,7 +570,8 @@ void APlayfield::ToggleGrid(bool bEnabled)
     {
         if (IsValid(enemyState.Enemy))
         {
-            enemyState.Enemy->SetActorHiddenInGame(!bEnabled);
+            if (bEnabled) enemyState.Enemy->SetActorHiddenInGame(false);
+            enemyState.Enemy->CaptureLocation = enemyState.Location;
             enemyState.Enemy->SetActorEnableCollision(bEnabled);
         }
     }

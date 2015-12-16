@@ -30,4 +30,7 @@ public:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
     EnemyColor Color;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    FVector CaptureLocation;
 };
