@@ -13,7 +13,9 @@ namespace
 }
 
 // Sets default values
-APlayfield::APlayfield() : CurrentLevel(0), CurrentRow(0), PlayTime(0.0f), SpeedMultiplier(1.0f), PlayerIsDead(false), WaitingForWaveClear(false), Attacking(false), LoopWaveStart(0)
+APlayfield::APlayfield() : CurrentLevel(0), CurrentRow(0), PlayTime(0.0f), 
+    SpeedMultiplier(1.0f), PlayerIsDead(false), WaitingForWaveClear(false), 
+    Attacking(false), LoopWaveStart(0), TimeDilation(1.0f), SuppressFire(false)
 {
 	// Set this actor to call Tick() every frame.  You can tu  rn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -55,6 +57,9 @@ void APlayfield::BeginPlay()
 void APlayfield::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+
+    // Allow for spline time dilation
+    DeltaTime = DeltaTime * TimeDilation;
 	
 	// Update the grid pivot
 	{
@@ -186,8 +191,11 @@ void APlayfield::Tick( float DeltaTime )
 					{
 						enemyState.FireDelayAlpha = enemyState.FireDelay;
 						
-						auto bulletLocation = enemyState.IntroSpline->GetLocationAtDistanceAlongSpline(clampedPosition, ESplineCoordinateSpace::World);
-						SpawnEnemyBulletAtLocation(enemyState.Type, bulletLocation);
+                        if (!SuppressFire)
+                        {
+                            auto bulletLocation = enemyState.IntroSpline->GetLocationAtDistanceAlongSpline(clampedPosition, ESplineCoordinateSpace::World);
+                            SpawnEnemyBulletAtLocation(enemyState.Type, bulletLocation);
+                        }
 					}
 				}
 				
@@ -318,8 +326,11 @@ void APlayfield::Tick( float DeltaTime )
 					{
 						enemyState.FireDelayAlpha = enemyState.FireDelay;
 						
-						auto bulletLocation = enemyState.AttackSpline->GetLocationAtDistanceAlongSpline(clampedPosition, ESplineCoordinateSpace::World);
-						SpawnEnemyBulletAtLocation(enemyState.Type, bulletLocation);
+                        if (!SuppressFire)
+                        {
+                            auto bulletLocation = enemyState.AttackSpline->GetLocationAtDistanceAlongSpline(clampedPosition, ESplineCoordinateSpace::World);
+                            SpawnEnemyBulletAtLocation(enemyState.Type, bulletLocation);
+                        }
 					}
 				}
 				

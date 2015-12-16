@@ -167,6 +167,12 @@ public:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gameplay")
     int32 LoopWaveStart;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+    float TimeDilation;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+    bool SuppressFire;
 	
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	AActor* SpawnRedEnemy();
