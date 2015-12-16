@@ -91,6 +91,11 @@ void AMatch3GridTile::OnSwapMove_Implementation(AMatch3GridTile* DestinationTile
 	Grid->OnSwapDisplayFinished(this);
 }
 
+FVector AMatch3GridTile::GetGridLocation()
+{
+    return Grid->GetLocationFromGridAddress(GridAddress);
+}
+
 void AMatch3GridTile::StartFalling(bool bUseCurrentWorldLocation)
 {
 	float fallDistance = 0.0f;

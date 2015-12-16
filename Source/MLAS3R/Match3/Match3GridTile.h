@@ -86,6 +86,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Match 3 Game Events")
 	void PlaySelectionEffect(bool bTurnEffectOn);
 
+    /** Get the world location of the tile on the grid using GridAddress. */
+    UFUNCTION(BlueprintPure, Category = "Match 3 Tile")
+    FVector GetGridLocation();
+
 	void StartFalling(bool bUseCurrentWorldLocation = false);
 	void FinishFalling();
 	

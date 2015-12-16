@@ -19,4 +19,14 @@ AEnemy::AEnemy()
 	SetActorEnableCollision(true);
 }
 
+FString GetEnemyColorAsString(EnemyColor color)
+{
+    auto enumObject = FindObject<UEnum>(ANY_PACKAGE, TEXT("EnemyColor"), true);
 
+    if (enumObject == nullptr)
+    {
+        return FString("Invalid");
+    }
+
+    return enumObject->GetEnumName(static_cast<int32>(color));
+}

@@ -14,6 +14,9 @@ enum class EnemyColor : uint8
     Yellow,
 };
 
+/** Return the EnemyColor enumerator value as a string. */
+FString GetEnemyColorAsString(EnemyColor color);
+
 /**
  *
  */

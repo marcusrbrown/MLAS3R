@@ -3,7 +3,9 @@
 #include "MLAS3R.h"
 #include "Match3Grid.h"
 #include "Match3/Match3BasicTile.h"
+#include "Match3/Match3EnemyTile.h"
 #include "MLAS3RPlayerController.h"
+#include "Enemy.h"
 
 namespace
 {
@@ -74,12 +76,76 @@ AMatch3GridTile* AMatch3Grid::CreateTile(UClass* TileClass, FVector SpawnLocatio
 	return nullptr;
 }
 
+AMatch3EnemyTile* AMatch3Grid::CreateEnemyTile(UClass* TileClass, FVector SpawnLocation, int32 SpawnGridAddress, AEnemy* Enemy, FName MatchId)
+{
+    auto* const world = GetWorld();
+    if (world)
+    {
+        FActorSpawnParameters spawnParams;
+        spawnParams.Owner = this;
+        spawnParams.Instigator = Instigator;
+        spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+        auto* const newTile = world->SpawnActor<AMatch3EnemyTile>(TileClass, SpawnLocation, DefaultSpawnRotation, spawnParams);
+        newTile->SetEnemy(Enemy);
+        newTile->MatchId = MatchId;
+        newTile->SetGridAddress(SpawnGridAddress);
+        Tiles[SpawnGridAddress] = newTile;
+        return newTile;
+    }
+
+    return nullptr;
+}
+
 void AMatch3Grid::FillTilesFromCapturedActors()
 {
     if (CapturedActors.Num() == 0)
     {
         return;
     }
+
+    TArray<AMatch3EnemyTile*> enemyTiles;
+    TArray<AEnemy*> capturedEnemies;
+
+    for (auto actor : CapturedActors)
+    {
+        auto enemy = Cast<AEnemy>(actor);
+
+        if (enemy == nullptr)
+        {
+            continue;
+        }
+
+        auto color = enemy->Color;
+        FString colorName = GetEnemyColorAsString(color);
+        auto matchId = FName(*FString::Printf(TEXT("Match %s"), *colorName));
+        AMatch3EnemyTile* enemyTile = nullptr;
+
+        for (auto tile : Tiles)
+        {
+            if (!tile->IsA(AMatch3EnemyTile::StaticClass()) && (tile->MatchId == matchId))
+            {
+                // Replace the non-enemy tile with a new enemy tile.
+                auto spawnGridAddress = tile->GetGridAddress();
+                auto spawnLocation = GetLocationFromGridAddress(spawnGridAddress);
+
+                enemyTile = CreateEnemyTile(EnemyTileClass, spawnLocation, spawnGridAddress, enemy, matchId);
+                GetWorld()->DestroyActor(tile);
+                break;
+            }
+        }
+
+        if (enemyTile != nullptr)
+        {
+            enemyTiles.Add(enemyTile);
+        }
+        else
+        {
+            capturedEnemies.Add(enemy);
+        }
+    }
+
+    OnEnemiesCaptured(enemyTiles, capturedEnemies);
 }
 
 void AMatch3Grid::FillTilesFromLibrary()
@@ -191,6 +257,20 @@ void AMatch3Grid::CaptureActors(TArray<AActor*> Actors)
     CapturedActors = Actors;
 }
 
+void AMatch3Grid::OnEnemiesCaptured_Implementation(TArray<class AMatch3EnemyTile*> const& EnemyTiles, TArray<class AEnemy*> const& CapturedEnemies)
+{
+    for (auto tile : Tiles)
+    {
+        auto enemyTile = Cast<AMatch3EnemyTile>(tile);
+
+        if (enemyTile != nullptr)
+        {
+            enemyTile->bSyncEnemyLocation = true;
+            enemyTile->GetEnemy()->SetActorHiddenInGame(false);
+        }
+    }
+}
+
 void AMatch3Grid::ToggleGrid(bool bEnabled)
 {
     if (bEnabled)
@@ -199,6 +279,7 @@ void AMatch3Grid::ToggleGrid(bool bEnabled)
         Tiles.AddDefaulted(Tiles.Max());
 
         FillTilesFromLibrary();
+        FillTilesFromCapturedActors();
     }
 
     for (auto tile : Tiles)

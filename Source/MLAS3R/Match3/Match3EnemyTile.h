@@ -12,8 +12,22 @@ UCLASS(Abstract)
 class MLAS3R_API AMatch3EnemyTile : public AMatch3GridTile
 {
 	GENERATED_BODY()
-	
-	
-	
-	
+
+public:
+    AMatch3EnemyTile();
+
+    class AEnemy* GetEnemy() const;
+    void SetEnemy(class AEnemy* NewEnemy);
+
+    uint32 bSyncEnemyLocation : 1;
+
+protected:
+    virtual void BeginPlay() override;
+
+    virtual void Tick(float DeltaSeconds) override;
+
+    virtual void OnMatched_Implementation(EMatch3MoveType MoveType) override;
+
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Match 3 Enemy Tile")
+    class AEnemy* Enemy;
 };

@@ -42,6 +42,7 @@ public:
 	virtual void Tick( float DeltaSeconds ) override;
 
 	AMatch3GridTile* CreateTile(UClass* TileClass, FVector SpawnLocation, int32 SpawnGridAddress, int TileTypeID);
+    class AMatch3EnemyTile* CreateEnemyTile(UClass* TileClass, FVector SpawnLocation, int32 SpawnGridAddress, class AEnemy* Enemy, FName MatchId);
 
     void FillTilesFromCapturedActors();
     void FillTilesFromLibrary();
@@ -50,6 +51,10 @@ public:
     /** Capture the actors that will be used to fill in the Match 3 grid. */
     UFUNCTION(BlueprintCallable, Category = "Match 3 Grid")
     void CaptureActors(TArray<AActor*> Actors);
+
+    UFUNCTION(BlueprintNativeEvent, Category = "Match 3 Grid")
+    void OnEnemiesCaptured(TArray<class AMatch3EnemyTile*> const& EnemyTiles, TArray<class AEnemy*> const& CapturedEnemies);
+    virtual void OnEnemiesCaptured_Implementation(TArray<class AMatch3EnemyTile*> const& EnemyTiles, TArray<class AEnemy*> const& CapturedEnemies);
 
     /** Toggle the grid. When enabled, all contained tiles are visible and ticking. */
     UFUNCTION(BlueprintCallable, Category = "Match 3 Grid")
@@ -61,7 +66,7 @@ public:
 	void OnMoveMade(EMatch3MoveType MoveType);
 
 	/** Get the world location from any grid address. */
-	UFUNCTION(BlueprintCallable, Category = "Match 3 Grid")
+	UFUNCTION(BlueprintPure, Category = "Match 3 Grid")
 	FVector GetLocationFromGridAddress(int32 GridAddress);
 
 	FVector GetLocationFromGridAddress(int32 GridAddress, int32 XOffsetInTiles, int32 YOffsetInTiles);
@@ -105,14 +110,14 @@ public:
 	int32 GetScoreMultiplier(EMatch3MoveType MoveType);
 	virtual int32 GetScoreMultiplier_Implementation(EMatch3MoveType MoveType);
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Match 3 Grid")
 	TArray<AMatch3GridTile*> Tiles;
 
-	UPROPERTY(EditInstanceOnly)
+	UPROPERTY(EditInstanceOnly, Category = "Match 3 Grid")
 	TArray<FTileLibraryDescriptor> TileLibrary;
 
 	UPROPERTY(EditAnywhere, Category = "Match 3 Grid")
-	TSubclassOf<AMatch3GridTile> TileToSpawn;
+	TSubclassOf<class AMatch3EnemyTile> EnemyTileClass;
 
 	/** The width of the grid. Used to calculate tile positions. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Match 3 Grid")
