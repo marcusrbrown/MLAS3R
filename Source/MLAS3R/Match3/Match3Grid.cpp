@@ -271,7 +271,7 @@ void AMatch3Grid::ToggleEnemyTileSync(bool bEnabled)
         if (enemyTile != nullptr)
         {
             enemyTile->bSyncEnemyLocation = bEnabled;
-            enemyTile->GetEnemy()->SetActorHiddenInGame(!bEnabled);
+            //enemyTile->GetEnemy()->SetActorHiddenInGame(!bEnabled);
         }
     }
 }
