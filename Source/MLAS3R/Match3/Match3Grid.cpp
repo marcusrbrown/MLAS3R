@@ -253,10 +253,13 @@ void AMatch3Grid::CaptureActors(TArray<AActor*> Actors)
 void AMatch3Grid::OnEnemiesCaptured_Implementation(TArray<class AMatch3EnemyTile*> const& EnemyTiles, TArray<class AEnemy*> const& CapturedEnemies)
 {
     ToggleEnemyTileSync(true);
+
+    OnGridActivated();
 }
 
 void AMatch3Grid::OnEnemiesReleased_Implementation(TArray<class AMatch3EnemyTile*> const & EnemyTiles, TArray<class AEnemy*> const & CapturedEnemies)
 {
+    OnGridDeactivated();
 }
 
 void AMatch3Grid::ToggleEnemyTileSync(bool bEnabled)
@@ -284,8 +287,6 @@ void AMatch3Grid::ToggleGrid(bool bEnabled)
         FillTilesFromCapturedActors();
 
         OnEnemiesCaptured(EnemyTiles, CapturedEnemies);
-
-        OnGridActivated();
     }
     else
     {
@@ -302,8 +303,6 @@ void AMatch3Grid::ToggleGrid(bool bEnabled)
         ToggleEnemyTileSync(false);
 
         OnEnemiesReleased(EnemyTiles, CapturedEnemies);
-
-        OnGridDeactivated();
     }
 }
 
@@ -613,7 +612,7 @@ void AMatch3Grid::ExecuteMatch(TArray<AMatch3GridTile*> MatchingTiles)
             }
             else
             {
-
+                UE_LOG(LogTemp, Log, TEXT("This one"));
             }
         }
 
