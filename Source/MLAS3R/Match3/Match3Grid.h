@@ -60,6 +60,14 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Match 3 Grid")
     void ToggleGrid(bool bEnabled);
 
+    UFUNCTION(BlueprintNativeEvent, Category = "Match 3 Grid")
+    void OnGridActivated(TArray<AMatch3GridTile*> const& Tiles);
+    virtual void OnGridActivated_Implementation(TArray<AMatch3GridTile*> const& Tiles);
+
+    UFUNCTION(BlueprintNativeEvent, Category = "Match 3 Grid")
+    void OnGridDeactivated();
+    virtual void OnGridDeactivated_Implementation();
+
 	AMatch3GridTile* GetTileFromGridAddress(int32 GridAddress) const;
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (ExpandEnumAsExecs = "MoveType"), Category = "Match 3 Grid")
@@ -148,21 +156,27 @@ private:
 	UPROPERTY(Category = "Bounds", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* Bounds;
 
+    UPROPERTY()
 	/** Array of tiles found in the most recent call to IsMoveLegal(). */
 	TArray<AMatch3GridTile*> LastLegalMatch;
 
+    UPROPERTY()
 	/** Tiles that are currently falling. */
 	TArray<AMatch3GridTile*> FallingTiles;
 
+    UPROPERTY()
 	/** Tiles that are currently being swapped. */
 	TArray<AMatch3GridTile*> SwappingTiles;
 
+    UPROPERTY()
 	/** Tiles that should be checked for automatic matches. */
 	TArray<AMatch3GridTile*> TilesToCheck;
 
+    UPROPERTY()
 	/** Tiles that are currently being destroyed (because matches). */
 	TArray<AMatch3GridTile*> TilesBeingDestroyed;
 
+    UPROPERTY()
     TArray<AActor*> CapturedActors;
 
 	/** The last move made by a player. */

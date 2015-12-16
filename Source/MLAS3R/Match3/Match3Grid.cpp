@@ -69,6 +69,7 @@ AMatch3GridTile* AMatch3Grid::CreateTile(UClass* TileClass, FVector SpawnLocatio
 		auto* const newTile = world->SpawnActor<AMatch3GridTile>(TileClass, SpawnLocation, DefaultSpawnRotation, spawnParams);
 		newTile->TileTypeID = TileTypeID;
 		newTile->SetGridAddress(SpawnGridAddress);
+        newTile->SetActorHiddenInGame(true);
 		Tiles[SpawnGridAddress] = newTile;
 		return newTile;
 	}
@@ -280,22 +281,50 @@ void AMatch3Grid::ToggleGrid(bool bEnabled)
 
         FillTilesFromLibrary();
         FillTilesFromCapturedActors();
-    }
 
+        OnGridActivated(Tiles);
+    }
+    else
+    {
+        LastLegalMatch.Empty();
+        FallingTiles.Empty();
+        SwappingTiles.Empty();
+        TilesToCheck.Empty();
+        TilesBeingDestroyed.Empty();
+
+        CapturedActors.Empty();
+
+        bPendingSwapMove = bPendingSwapMoveSuccess = false;
+
+        OnGridDeactivated();
+    }
+}
+
+void AMatch3Grid::OnGridActivated_Implementation(TArray<AMatch3GridTile*> const& Tiles)
+{
     for (auto tile : Tiles)
     {
         if (IsValid(tile))
         {
-            tile->SetActorHiddenInGame(!bEnabled);
-
-            if (!bEnabled)
-            {
-                Tiles[tile->GetGridAddress()] = nullptr;
-                GetWorld()->DestroyActor(tile);
-            }
+            tile->SetActorHiddenInGame(false);
         }
     }
 }
+
+void AMatch3Grid::OnGridDeactivated_Implementation()
+{
+    for (auto tile : Tiles)
+    {
+        if (IsValid(tile))
+        {
+            GetWorld()->DestroyActor(tile);
+        }
+    }
+
+    Tiles.Empty(GridWidth * GridHeight);
+    Tiles.AddDefaulted(Tiles.Max());
+}
+
 
 AMatch3GridTile* AMatch3Grid::GetTileFromGridAddress(int32 GridAddress) const
 {
