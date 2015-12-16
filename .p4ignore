@@ -4,6 +4,8 @@
 *.opensdf
 *.suo
 *.pdb
+*.VC.db
+*.VC.opendb
 *.xcworkspace
 
 # Ignore intermediate directories
