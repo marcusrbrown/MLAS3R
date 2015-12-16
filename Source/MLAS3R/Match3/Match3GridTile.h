@@ -3,7 +3,6 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "Enemy.h"
 #include "Match3GridTile.generated.h"
 
 class AMatch3Grid;
@@ -23,6 +22,15 @@ enum class EMatch3MoveType : uint8
 	None,
 	Invalid,
 	Swap,
+};
+
+UENUM()
+enum class EMatch3TileColor : uint8
+{
+    Red,
+    Green,
+    Blue,
+    Yellow,
 };
 
 USTRUCT()
@@ -91,7 +99,7 @@ public:
     int32 TileTypeID;
 
     UPROPERTY()
-    EnemyColor Color;
+    EMatch3TileColor Color;
 	
 	UPROPERTY()
 	EMatch3TileState TileState;

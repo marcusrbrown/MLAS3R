@@ -4,7 +4,6 @@
 
 #include "GameFramework/Actor.h"
 #include "Match3GridTile.h"
-#include "Enemy.h"
 #include "Match3Grid.generated.h"
 
 /** TODO: This guy will not survive. He's a load-bearing struct from the Match 3 training series. */
@@ -17,7 +16,7 @@ struct FTileType
 	float Probability;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    EnemyColor Color;
+    EMatch3TileColor Color;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMesh* TileMesh;

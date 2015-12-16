@@ -109,7 +109,7 @@ void AMatch3Grid::FillTilesFromLibrary()
             for (;;)
             {
                 tileID = SelectTileFromLibrary();
-                EnemyColor tileColor = TileLibrary[tileID].Color;
+                auto tileColor = TileLibrary[tileID].Color;
 
                 // TODO: marcus@HV: Reflow this logic (originally from the Match 3 training video.
 
