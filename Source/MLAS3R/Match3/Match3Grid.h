@@ -3,10 +3,8 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "Match3/Match3GridTile.h"
 #include "Match3Grid.generated.h"
-
-enum class EMatch3MoveType : uint8;
-class AMatch3GridTile;
 
 /** Describes tiles stored within the tile library. */
 USTRUCT()
