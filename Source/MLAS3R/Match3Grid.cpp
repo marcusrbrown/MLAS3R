@@ -63,6 +63,7 @@ AMatch3GridTile* AMatch3Grid::CreateTile(UStaticMesh* StaticMesh, FVector SpawnL
 			FActorSpawnParameters spawnParams;
 			spawnParams.Owner = this;
 			spawnParams.Instigator = Instigator;
+            spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 			auto* const newTile = world->SpawnActor<AMatch3GridTile>(TileToSpawn, SpawnLocation, DefaultSpawnRotation, spawnParams);
 			newTile->GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
