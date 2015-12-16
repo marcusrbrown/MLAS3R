@@ -1,10 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MLAS3R.h"
-#include "MLAS3RGameMode.h"
-#include "Match3Grid.h"
 #include "Match3GridTile.h"
-
+#include "Match3Grid.h"
+#include "MLAS3RGameMode.h"
 
 // Sets default values
 AMatch3GridTile::AMatch3GridTile()
@@ -15,6 +14,15 @@ AMatch3GridTile::AMatch3GridTile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
+    // Generate a default Match ID value, so that if it isn't set, the tile can only match tiles that
+    // are the same class.
+    MatchId = FName(*FString::Printf(TEXT("Match %s"), *GetClass()->GetFName().ToString()));
+}
+
+void AMatch3GridTile::PostInitProperties()
+{
+    Super::PostInitProperties();
 }
 
 // Called when the game starts or when spawned

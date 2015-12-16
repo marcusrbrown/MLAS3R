@@ -2,6 +2,7 @@
 
 #include "MLAS3R.h"
 #include "Match3Grid.h"
+#include "Match3/Match3BasicTile.h"
 #include "MLAS3RPlayerController.h"
 
 namespace
@@ -50,31 +51,24 @@ void AMatch3Grid::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 }
 
-AMatch3GridTile* AMatch3Grid::CreateTile(UStaticMesh* StaticMesh, FVector SpawnLocation, int32 SpawnGridAddress, int TileTypeID)
+AMatch3GridTile* AMatch3Grid::CreateTile(UClass* TileClass, FVector SpawnLocation, int32 SpawnGridAddress, int TileTypeID)
 {
-	if (TileToSpawn)
+	checkSlow(TileLibrary.IsValidIndex(TileTypeID));
+	checkSlow(TileLibrary[TileTypeID] != nullptr);
+
+	auto* const world = GetWorld();
+	if (world)
 	{
-		checkSlow(TileLibrary.IsValidIndex(TileTypeID));
-		checkSlow(TileLibrary[TileTypeID] != nullptr);
+		FActorSpawnParameters spawnParams;
+		spawnParams.Owner = this;
+		spawnParams.Instigator = Instigator;
+        spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		auto* const world = GetWorld();
-		if (world)
-		{
-			FActorSpawnParameters spawnParams;
-			spawnParams.Owner = this;
-			spawnParams.Instigator = Instigator;
-            spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-			auto* const newTile = world->SpawnActor<AMatch3GridTile>(TileToSpawn, SpawnLocation, DefaultSpawnRotation, spawnParams);
-			newTile->GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
-			newTile->GetStaticMeshComponent()->SetStaticMesh(StaticMesh);
-			newTile->TileTypeID = TileTypeID;
-            newTile->Color = TileLibrary[TileTypeID].Color;
-			newTile->Abilities = TileLibrary[TileTypeID].Abilities;
-			newTile->SetGridAddress(SpawnGridAddress);
-			Tiles[SpawnGridAddress] = newTile;
-			return newTile;
-		}
+		auto* const newTile = world->SpawnActor<AMatch3GridTile>(TileClass, SpawnLocation, DefaultSpawnRotation, spawnParams);
+		newTile->TileTypeID = TileTypeID;
+		newTile->SetGridAddress(SpawnGridAddress);
+		Tiles[SpawnGridAddress] = newTile;
+		return newTile;
 	}
 
 	return nullptr;
@@ -103,13 +97,19 @@ void AMatch3Grid::FillTilesFromLibrary()
                 continue;
             }
 
-            FVector spawnLocation = GetLocationFromGridAddress(gridAddress);
-
+            UClass* tileClass = nullptr;
             int32 tileID;
             for (;;)
             {
                 tileID = SelectTileFromLibrary();
-                auto tileColor = TileLibrary[tileID].Color;
+                tileClass = TileLibrary[tileID].TileClass;
+
+                if (tileClass == nullptr)
+                {
+                    break;
+                }
+
+                auto matchId = tileClass->GetDefaultObject<AMatch3GridTile>()->MatchId;
 
                 // TODO: marcus@HV: Reflow this logic (originally from the Match 3 training video.
 
@@ -126,7 +126,7 @@ void AMatch3Grid::FillTilesFromLibrary()
                             //checkSlow(GetTileFromGridAddress(testAddress));
 
                             if (!GetGridAddressWithOffset(0, column - (horizontal ? tileOffset : 0), row - (horizontal ? 0 : tileOffset), testAddress)
-                                || (GetTileFromGridAddress(testAddress)->Color != tileColor))
+                                || (GetTileFromGridAddress(testAddress)->MatchId != matchId))
                             {
                                 // Not in a matching run, or off the edge of a map, so stop checking this axis.
                                 break;
@@ -153,7 +153,12 @@ void AMatch3Grid::FillTilesFromLibrary()
                 }
             }
 
-            CreateTile(TileLibrary[tileID].TileMesh, spawnLocation, gridAddress, tileID);
+            if (tileClass != nullptr)
+            {
+                FVector spawnLocation = GetLocationFromGridAddress(gridAddress);
+
+                CreateTile(tileClass, spawnLocation, gridAddress, tileID);
+            }
         }
     }
 }
@@ -377,7 +382,7 @@ bool AMatch3Grid::IsMoveLegal(AMatch3GridTile* TileA, AMatch3GridTile* TileB)
 {
 	if (TileA && TileB && (TileA != TileB) && TileA->Abilities.CanSwap() && TileB->Abilities.CanSwap())
 	{
-		if (TileA->Color != TileB->Color)
+		if (TileA->MatchId != TileB->MatchId)
 		{
 			// Swap the tiles, check for matches, then swap them back to determine whether the move is legal.
 			SwapTiles(TileA, TileB);
@@ -420,7 +425,7 @@ TArray<AMatch3GridTile*> AMatch3Grid::FindNeighbors(AMatch3GridTile* StartingTil
 				{
 					neighborTile = GetTileFromGridAddress(neighborGridAddress);
 
-					if (neighborTile && (!bMustMatchID || (neighborTile->Color == StartingTile->Color)))
+					if (neighborTile && (!bMustMatchID || (neighborTile->MatchId == StartingTile->MatchId)))
 					{
 						matchInProgress.Add(neighborTile);
 						continue;
@@ -503,7 +508,6 @@ void AMatch3Grid::OnTileWasSelected(AMatch3GridTile* NewSelectedTile)
 	checkSlow(TileLibrary.IsValidIndex(NewSelectedTile->TileTypeID));
 	checkSlow(TileLibrary[NewSelectedTile->TileTypeID] != nullptr);
 #endif
-	FTileType& NewSelectedTileType = TileLibrary[NewSelectedTile->TileTypeID];
 
 	if (SelectedTile)
 	{
@@ -534,7 +538,7 @@ void AMatch3Grid::OnTileWasSelected(AMatch3GridTile* NewSelectedTile)
 	{
 		// TODO: marcus@HV: Here Bejeweled Match 3 games could check for things like bombs, etc.
 
-		if (NewSelectedTileType.Abilities.CanSwap())
+		if (NewSelectedTile->Abilities.CanSwap())
 		{
 			// This is the first tile in the sequence, so remember it for later.
 			SelectedTile = NewSelectedTile;

@@ -46,8 +46,8 @@ protected:
 	uint32 bPreventSwapping : 1;
 };
 
-UCLASS(Blueprintable)
-class MLAS3R_API AMatch3GridTile : public AStaticMeshActor
+UCLASS(Abstract)
+class MLAS3R_API AMatch3GridTile : public AActor
 {
 	GENERATED_BODY()
 	
@@ -98,16 +98,19 @@ public:
     UPROPERTY()
     int32 TileTypeID;
 
-    UPROPERTY()
-    EMatch3TileColor Color;
-	
 	UPROPERTY()
 	EMatch3TileState TileState;
 
 	UPROPERTY()
 	FTileAbilities Abilities;
+
+    /** The unique identifier used to match this tile against similar tiles. */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Match 3 Tile")
+    FName MatchId;
 	
 protected:
+    virtual void PostInitProperties() override;
+
 	float FallingStartTime;
 	float TotalFallingTime;
 	FVector FallingStartLocation;

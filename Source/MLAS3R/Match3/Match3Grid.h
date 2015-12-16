@@ -3,28 +3,26 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "Match3GridTile.h"
 #include "Match3Grid.generated.h"
 
-/** TODO: This guy will not survive. He's a load-bearing struct from the Match 3 training series. */
-USTRUCT()
-struct FTileType
-{
-	GENERATED_USTRUCT_BODY()
+enum class EMatch3MoveType : uint8;
+class AMatch3GridTile;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+/** Describes tiles stored within the tile library. */
+USTRUCT()
+struct FTileLibraryDescriptor
+{
+    GENERATED_BODY()
+
+    /** The probability that the tile will spawn. This value is normalized across all tile descriptors in a tile library. */
+	UPROPERTY(EditInstanceOnly)
 	float Probability;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    EMatch3TileColor Color;
+    /** The tile class used to spawn instances of this tile on the grid. */
+    UPROPERTY(EditInstanceOnly)
+    TSubclassOf<class AMatch3BasicTile> TileClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMesh* TileMesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FTileAbilities Abilities;
-
-	FTileType()
+    FTileLibraryDescriptor()
 	: Probability(1.0f)
 	{
 	}
@@ -45,7 +43,7 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-	AMatch3GridTile* CreateTile(UStaticMesh* StaticMesh, FVector SpawnLocation, int32 SpawnGridAddress, int TileTypeID);
+	AMatch3GridTile* CreateTile(UClass* TileClass, FVector SpawnLocation, int32 SpawnGridAddress, int TileTypeID);
 
     void FillTilesFromCapturedActors();
     void FillTilesFromLibrary();
@@ -112,11 +110,11 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TArray<AMatch3GridTile*> Tiles;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FTileType> TileLibrary;
+	UPROPERTY(EditInstanceOnly)
+	TArray<FTileLibraryDescriptor> TileLibrary;
 
 	UPROPERTY(EditAnywhere, Category = "Match 3 Grid")
-	TSubclassOf<class AMatch3GridTile> TileToSpawn;
+	TSubclassOf<AMatch3GridTile> TileToSpawn;
 
 	/** The width of the grid. Used to calculate tile positions. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Match 3 Grid")
