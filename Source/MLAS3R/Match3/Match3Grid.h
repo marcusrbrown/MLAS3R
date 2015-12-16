@@ -136,6 +136,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Match 3 Tile")
 	FVector2D TileSize;
 
+    UPROPERTY()
 	AMatch3GridTile* SelectedTile;
 
 private:
