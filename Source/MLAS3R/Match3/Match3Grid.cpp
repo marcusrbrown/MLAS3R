@@ -92,6 +92,7 @@ AMatch3EnemyTile* AMatch3Grid::CreateEnemyTile(UClass* TileClass, FVector SpawnL
         newTile->MatchId = MatchId;
         newTile->SetGridAddress(SpawnGridAddress);
         Tiles[SpawnGridAddress] = newTile;
+        EnemyTiles.Add(newTile);
         return newTile;
     }
 
@@ -104,9 +105,6 @@ void AMatch3Grid::FillTilesFromCapturedActors()
     {
         return;
     }
-
-    TArray<AMatch3EnemyTile*> enemyTiles;
-    TArray<AEnemy*> capturedEnemies;
 
     for (auto actor : CapturedActors)
     {
@@ -136,17 +134,11 @@ void AMatch3Grid::FillTilesFromCapturedActors()
             }
         }
 
-        if (enemyTile != nullptr)
+        if (enemyTile == nullptr)
         {
-            enemyTiles.Add(enemyTile);
-        }
-        else
-        {
-            capturedEnemies.Add(enemy);
+            CapturedEnemies.Add(enemy);
         }
     }
-
-    OnEnemiesCaptured(enemyTiles, capturedEnemies);
 }
 
 void AMatch3Grid::FillTilesFromLibrary()
@@ -260,14 +252,23 @@ void AMatch3Grid::CaptureActors(TArray<AActor*> Actors)
 
 void AMatch3Grid::OnEnemiesCaptured_Implementation(TArray<class AMatch3EnemyTile*> const& EnemyTiles, TArray<class AEnemy*> const& CapturedEnemies)
 {
+    ToggleEnemyTileSync(true);
+}
+
+void AMatch3Grid::OnEnemiesReleased_Implementation(TArray<class AMatch3EnemyTile*> const & EnemyTiles, TArray<class AEnemy*> const & CapturedEnemies)
+{
+}
+
+void AMatch3Grid::ToggleEnemyTileSync(bool bEnabled)
+{
     for (auto tile : Tiles)
     {
         auto enemyTile = Cast<AMatch3EnemyTile>(tile);
 
         if (enemyTile != nullptr)
         {
-            enemyTile->bSyncEnemyLocation = true;
-            enemyTile->GetEnemy()->SetActorHiddenInGame(false);
+            enemyTile->bSyncEnemyLocation = bEnabled;
+            enemyTile->GetEnemy()->SetActorHiddenInGame(!bEnabled);
         }
     }
 }
@@ -282,7 +283,9 @@ void AMatch3Grid::ToggleGrid(bool bEnabled)
         FillTilesFromLibrary();
         FillTilesFromCapturedActors();
 
-        OnGridActivated(Tiles);
+        OnEnemiesCaptured(EnemyTiles, CapturedEnemies);
+
+        OnGridActivated();
     }
     else
     {
@@ -296,11 +299,15 @@ void AMatch3Grid::ToggleGrid(bool bEnabled)
 
         bPendingSwapMove = bPendingSwapMoveSuccess = false;
 
+        ToggleEnemyTileSync(false);
+
+        OnEnemiesReleased(EnemyTiles, CapturedEnemies);
+
         OnGridDeactivated();
     }
 }
 
-void AMatch3Grid::OnGridActivated_Implementation(TArray<AMatch3GridTile*> const& Tiles)
+void AMatch3Grid::OnGridActivated_Implementation()
 {
     for (auto tile : Tiles)
     {
@@ -320,6 +327,9 @@ void AMatch3Grid::OnGridDeactivated_Implementation()
             GetWorld()->DestroyActor(tile);
         }
     }
+
+    EnemyTiles.Empty();
+    CapturedEnemies.Empty();
 
     Tiles.Empty(GridWidth * GridHeight);
     Tiles.AddDefaulted(Tiles.Max());
@@ -437,8 +447,18 @@ void AMatch3Grid::OnTileFallingFinished(AMatch3GridTile* Tile, int32 LandingGrid
 
 void AMatch3Grid::OnTileMatchingFinished(AMatch3GridTile* Tile)
 {
-    // Remove the tile.
-    GetWorld()->DestroyActor(Tile);
+    if (IsValid(Tile))
+    {
+        auto enemyTile = Cast<AMatch3EnemyTile>(Tile);
+
+        if (enemyTile != nullptr)
+        {
+            EnemyTiles.Remove(enemyTile);
+        }
+
+        // Remove the tile.
+        GetWorld()->DestroyActor(Tile);
+    }
 }
 
 void AMatch3Grid::OnSwapDisplayFinished(AMatch3GridTile* Tile)

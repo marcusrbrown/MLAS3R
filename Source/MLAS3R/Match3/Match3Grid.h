@@ -56,13 +56,17 @@ public:
     void OnEnemiesCaptured(TArray<class AMatch3EnemyTile*> const& EnemyTiles, TArray<class AEnemy*> const& CapturedEnemies);
     virtual void OnEnemiesCaptured_Implementation(TArray<class AMatch3EnemyTile*> const& EnemyTiles, TArray<class AEnemy*> const& CapturedEnemies);
 
+    UFUNCTION(BlueprintNativeEvent, Category = "Match 3 Grid")
+    void OnEnemiesReleased(TArray<class AMatch3EnemyTile*> const& EnemyTiles, TArray<class AEnemy*> const& CapturedEnemies);
+    virtual void OnEnemiesReleased_Implementation(TArray<class AMatch3EnemyTile*> const& EnemyTiles, TArray<class AEnemy*> const& CapturedEnemies);
+
     /** Toggle the grid. When enabled, all contained tiles are visible and ticking. */
     UFUNCTION(BlueprintCallable, Category = "Match 3 Grid")
     void ToggleGrid(bool bEnabled);
 
     UFUNCTION(BlueprintNativeEvent, Category = "Match 3 Grid")
-    void OnGridActivated(TArray<AMatch3GridTile*> const& Tiles);
-    virtual void OnGridActivated_Implementation(TArray<AMatch3GridTile*> const& Tiles);
+    void OnGridActivated();
+    virtual void OnGridActivated_Implementation();
 
     UFUNCTION(BlueprintNativeEvent, Category = "Match 3 Grid")
     void OnGridDeactivated();
@@ -153,6 +157,8 @@ public:
 	AMatch3GridTile* SelectedTile;
 
 private:
+    void ToggleEnemyTileSync(bool bEnabled);
+
 	UPROPERTY(Category = "Bounds", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* Bounds;
 
@@ -178,6 +184,12 @@ private:
 
     UPROPERTY()
     TArray<AActor*> CapturedActors;
+
+    UPROPERTY()
+    TArray<class AMatch3EnemyTile*> EnemyTiles;
+
+    UPROPERTY()
+    TArray<class AEnemy*> CapturedEnemies;
 
 	/** The last move made by a player. */
 	TMap<APlayerController*, EMatch3MoveType> LastMoves;
