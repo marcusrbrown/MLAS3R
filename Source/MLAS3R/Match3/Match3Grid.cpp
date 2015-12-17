@@ -329,6 +329,7 @@ void AMatch3Grid::OnGridDeactivated_Implementation()
 
     EnemyTiles.Empty();
     CapturedEnemies.Empty();
+    SelectedTile = nullptr;
 
     Tiles.Empty(GridWidth * GridHeight);
     Tiles.AddDefaulted(Tiles.Max());
@@ -431,6 +432,9 @@ void AMatch3Grid::OnTileFallingFinished(AMatch3GridTile* Tile, int32 LandingGrid
         // Now that all tiles have finished falling, check for cascading matches.
         for (auto checkTile : TilesToCheck)
         {
+            // TODO: TJW - Investigate Crash
+            if (!IsValid(checkTile)) continue;
+
             LastLegalMatch = FindNeighbors(checkTile);
 
             if (LastLegalMatch.Num() > 0)
