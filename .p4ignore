@@ -1,21 +1,42 @@
-# Ignore generated files
-*.sln
+# Project root .p4ignore for a Unreal Engine 4 project.
+
+# Ignore generated project files in the project root
+/*.sln
+/*.xcworkspace
+/*.xcodeproj
+/Makefile
+/CMakeLists.txt
+
+# Ignore generated project metadata
 *.sdf
 *.opensdf
 *.suo
-*.pdb
-*.VC.db
-*.VC.opendb
-*.xcworkspace
+.vc/
+*.VC.*
+*.target.xml
+*.exe.config
 
 # Ignore intermediate directories
-obj
-Intermediate
-Saved
-DerivedDataCache
+obj/
+Intermediate/
+Saved/
+DerivedDataCache/
 
 # Ignore logs
 *.log
 
+# Ignore Git files and directories (except for .gitignore; this file could be
+# a target of the P4CONFIG environment variable)
+.gitattributes
+.git
+
+# Ignore FMOD Studio intermediate / user directories
+.cache/
+.user/
+
 # Ignore OS files
+# NOTE: The [] glob pattern doesn't appear to work, so Thumbs.db is specified
+# with and without capitalization
 .DS_Store
+Thumbs.db
+thumbs.db
